@@ -1,6 +1,20 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
 
+function Button({ label, onGivingFeedback }) {
+  return <button onClick={onGivingFeedback}>{label}</button>;
+}
+
+function StatisticLine({ text, value }) {
+  return (
+    <li>
+      <p>
+        {text} {value}
+      </p>
+    </li>
+  );
+}
+
 function Statistics({
   good,
   neutral,
@@ -10,33 +24,14 @@ function Statistics({
   positiveFeedback,
 }) {
   return (
-    <div>
-      <h2>statistics</h2>
-      {total <= 0 ? (
-        <p>No feedback given</p>
-      ) : (
-        <ul>
-          <li>
-            <p>good {good}</p>
-          </li>
-          <li>
-            <p>neutral {neutral}</p>
-          </li>
-          <li>
-            <p>bad {bad}</p>
-          </li>
-          <li>
-            <p>all {total}</p>
-          </li>
-          <li>
-            <p>average {averageFeedback}</p>
-          </li>
-          <li>
-            <p>positive {positiveFeedback}%</p>
-          </li>
-        </ul>
-      )}
-    </div>
+    <ul>
+      <StatisticLine text='good' value={good} />
+      <StatisticLine text='neutral' value={neutral} />
+      <StatisticLine text='bad' value={bad} />
+      <StatisticLine text='all' value={total} />
+      <StatisticLine text='average' value={averageFeedback} />
+      <StatisticLine text='positive' value={positiveFeedback} />
+    </ul>
   );
 }
 
@@ -58,19 +53,27 @@ const App = () => {
       <div>
         <h1>give feedback</h1>
         <div>
-          <button onClick={() => setGood(good + 1)}>good</button>
-          <button onClick={() => setNeutral(neutral + 1)}>neutral</button>
-          <button onClick={() => setBad(bad + 1)}>bad</button>
+          <Button label='good' onGivingFeedback={() => setGood(good + 1)} />
+          <Button
+            label='neutral'
+            onGivingFeedback={() => setNeutral(neutral + 1)}
+          />
+          <Button label='bad' onGivingFeedback={() => setBad(bad + 1)} />
         </div>
       </div>
-      <Statistics
-        averageFeedback={averageFeedback}
-        bad={bad}
-        good={good}
-        neutral={neutral}
-        positiveFeedback={positiveFeedback}
-        total={total}
-      />
+      <h2>statistics</h2>
+      {total <= 0 ? (
+        <p>no feedback given</p>
+      ) : (
+        <Statistics
+          averageFeedback={averageFeedback}
+          bad={bad}
+          good={good}
+          neutral={neutral}
+          positiveFeedback={positiveFeedback}
+          total={total}
+        />
+      )}
     </div>
   );
 };
