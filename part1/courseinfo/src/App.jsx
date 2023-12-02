@@ -1,22 +1,22 @@
 /* eslint-disable react/prop-types */
-function Header({ name }) {
-  return <h1>{name}</h1>;
+function Header({ course }) {
+  return <h1>{course}</h1>;
 }
 
-function Part({ part, exercise }) {
+function Part({ name, exercise }) {
   return (
     <p>
-      {part} {exercise}
+      {name} {exercise}
     </p>
   );
 }
 
-function Content({ part1, exercise1, part2, exercise2, part3, exercise3 }) {
+function Content({ part1, part2, part3 }) {
   return (
     <div>
-      <Part exercise={exercise1} part={part1} />
-      <Part exercise={exercise2} part={part2} />
-      <Part exercise={exercise3} part={part3} />
+      <Part exercise={part1.exercises} name={part1.name} />
+      <Part exercise={part2.exercises} name={part2.name} />
+      <Part exercise={part3.exercises} name={part3.name} />
     </div>
   );
 }
@@ -27,24 +27,23 @@ function Total({ total }) {
 
 function App() {
   const course = "Half Stack application development";
-  const part1 = "Fundamentals of React";
-  const exercises1 = 10;
-  const part2 = "Using props to pass data";
-  const exercises2 = 7;
-  const part3 = "State of a component";
-  const exercises3 = 14;
-  const total = exercises1 + exercises2 + exercises3;
+  const part1 = {
+    name: "Fundamentals of React",
+    exercises: 10,
+  };
+  const part2 = {
+    name: "Using props to pass data",
+    exercises: 7,
+  };
+  const part3 = {
+    name: "State of a component",
+    exercises: 14,
+  };
+  const total = part1.exercises + part2.exercises + part3.exercises;
   return (
     <div>
-      <Header name={course} />
-      <Content
-        part1={part1}
-        exercise1={exercises1}
-        part2={part2}
-        exercise2={exercises2}
-        part3={part3}
-        exercise3={exercises3}
-      />
+      <Header course={course} />
+      <Content part1={part1} part2={part2} part3={part3} />
       <Total total={total} />
     </div>
   );
