@@ -33,7 +33,7 @@ const App = () => {
   const textForVote = getTextFor(vote[selected]);
 
   const indexOfMostVotes = vote.indexOf(Math.max(...vote));
-  const textForMostVote = getTextFor(vote[indexOfMostVotes]);
+  const textForMostVotes = getTextFor(vote[indexOfMostVotes]);
 
   return (
     <div>
@@ -53,7 +53,7 @@ const App = () => {
         <div>
           <p>{anecdotes[indexOfMostVotes]}</p>
           <p>
-            has {vote[indexOfMostVotes]} {textForMostVote}
+            has {vote[indexOfMostVotes]} {textForMostVotes}
           </p>
         </div>
       </div>
