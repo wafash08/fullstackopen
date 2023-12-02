@@ -7,11 +7,10 @@ function Button({ label, onGivingFeedback }) {
 
 function StatisticLine({ text, value }) {
   return (
-    <li>
-      <p>
-        {text} {value}
-      </p>
-    </li>
+    <tr>
+      <td>{text}</td>
+      <td>{value}</td>
+    </tr>
   );
 }
 
@@ -24,14 +23,16 @@ function Statistics({
   positiveFeedback,
 }) {
   return (
-    <ul>
-      <StatisticLine text='good' value={good} />
-      <StatisticLine text='neutral' value={neutral} />
-      <StatisticLine text='bad' value={bad} />
-      <StatisticLine text='all' value={total} />
-      <StatisticLine text='average' value={averageFeedback} />
-      <StatisticLine text='positive' value={positiveFeedback} />
-    </ul>
+    <table>
+      <tbody>
+        <StatisticLine text='good' value={good} />
+        <StatisticLine text='neutral' value={neutral} />
+        <StatisticLine text='bad' value={bad} />
+        <StatisticLine text='all' value={total} />
+        <StatisticLine text='average' value={averageFeedback} />
+        <StatisticLine text='positive' value={positiveFeedback} />
+      </tbody>
+    </table>
   );
 }
 
@@ -63,7 +64,7 @@ const App = () => {
       </div>
       <h2>statistics</h2>
       {total <= 0 ? (
-        <p>no feedback given</p>
+        <p>No feedback given</p>
       ) : (
         <Statistics
           averageFeedback={averageFeedback}
