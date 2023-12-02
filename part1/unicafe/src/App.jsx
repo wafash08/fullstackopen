@@ -1,4 +1,44 @@
+/* eslint-disable react/prop-types */
 import { useState } from "react";
+
+function Statistics({
+  good,
+  neutral,
+  bad,
+  total,
+  averageFeedback,
+  positiveFeedback,
+}) {
+  return (
+    <div>
+      <h2>statistics</h2>
+      {total <= 0 ? (
+        <p>No feedback given</p>
+      ) : (
+        <ul>
+          <li>
+            <p>good {good}</p>
+          </li>
+          <li>
+            <p>neutral {neutral}</p>
+          </li>
+          <li>
+            <p>bad {bad}</p>
+          </li>
+          <li>
+            <p>all {total}</p>
+          </li>
+          <li>
+            <p>average {averageFeedback}</p>
+          </li>
+          <li>
+            <p>positive {positiveFeedback}%</p>
+          </li>
+        </ul>
+      )}
+    </div>
+  );
+}
 
 const App = () => {
   // save clicks of each button to its own state
@@ -7,8 +47,12 @@ const App = () => {
   const [bad, setBad] = useState(0);
 
   const total = good + neutral + bad;
-  const averageFeedback = (good - bad) / total;
-  const positiveFeedback = (good / total) * 100;
+  const average = (good - bad) / total;
+  const positive = (good / total) * 100;
+
+  const averageFeedback = isNaN(average) ? 0 : average;
+  const positiveFeedback = isNaN(positive) ? 0 : positive;
+
   return (
     <div>
       <div>
@@ -19,15 +63,14 @@ const App = () => {
           <button onClick={() => setBad(bad + 1)}>bad</button>
         </div>
       </div>
-      <div>
-        <h2>statistics</h2>
-        <p>good {good}</p>
-        <p>neutral {neutral}</p>
-        <p>bad {bad}</p>
-        <p>all {total}</p>
-        <p>average {isNaN(averageFeedback) ? 0 : averageFeedback}</p>
-        <p>positive {isNaN(positiveFeedback) ? 0 : positiveFeedback}%</p>
-      </div>
+      <Statistics
+        averageFeedback={averageFeedback}
+        bad={bad}
+        good={good}
+        neutral={neutral}
+        positiveFeedback={positiveFeedback}
+        total={total}
+      />
     </div>
   );
 };
