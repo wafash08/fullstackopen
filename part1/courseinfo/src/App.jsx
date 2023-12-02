@@ -3,11 +3,21 @@ function Header({ name }) {
   return <h1>{name}</h1>;
 }
 
-function Content({ part, exercise }) {
+function Part({ part, exercise }) {
   return (
     <p>
       {part} {exercise}
     </p>
+  );
+}
+
+function Content({ part1, exercise1, part2, exercise2, part3, exercise3 }) {
+  return (
+    <div>
+      <Part exercise={exercise1} part={part1} />
+      <Part exercise={exercise2} part={part2} />
+      <Part exercise={exercise3} part={part3} />
+    </div>
   );
 }
 
@@ -27,9 +37,14 @@ function App() {
   return (
     <div>
       <Header name={course} />
-      <Content part={part1} exercise={exercises1} />
-      <Content part={part2} exercise={exercises2} />
-      <Content part={part3} exercise={exercises3} />
+      <Content
+        part1={part1}
+        exercise1={exercises1}
+        part2={part2}
+        exercise2={exercises2}
+        part3={part3}
+        exercise3={exercises3}
+      />
       <Total total={total} />
     </div>
   );
