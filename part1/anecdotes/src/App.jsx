@@ -1,5 +1,9 @@
 import { useState } from "react";
 
+function getTextFor(something) {
+  return something > 1 ? "votes" : "vote";
+}
+
 const App = () => {
   const anecdotes = [
     "If it hurts, do it more often.",
@@ -26,20 +30,33 @@ const App = () => {
     setVote(copyVote);
   };
 
-  const selectedAnecdote = anecdotes[selected];
-  const textForVote = selectedAnecdote > 1 ? "votes" : "vote";
-  const numberVoteOfSelectedAnecdote = vote[selected];
+  const textForVote = getTextFor(vote[selected]);
+
+  const indexOfMostVotes = vote.indexOf(Math.max(...vote));
+  const textForMostVote = getTextFor(vote[indexOfMostVotes]);
 
   return (
     <div>
       <div>
-        <p>{selectedAnecdote}</p>
-        <p>
-          has {numberVoteOfSelectedAnecdote} {textForVote}
-        </p>
+        <h1>Anecdote of the day</h1>
+        <div>
+          <p>{anecdotes[selected]}</p>
+          <p>
+            has {vote[selected]} {textForVote}
+          </p>
+        </div>
+        <button onClick={handleVote}>vote</button>
+        <button onClick={handleSelectAnecdote}>next anecdote</button>
       </div>
-      <button onClick={handleVote}>vote</button>
-      <button onClick={handleSelectAnecdote}>next anecdote</button>
+      <div>
+        <h2>Anecdote with most votes</h2>
+        <div>
+          <p>{anecdotes[indexOfMostVotes]}</p>
+          <p>
+            has {vote[indexOfMostVotes]} {textForMostVote}
+          </p>
+        </div>
+      </div>
     </div>
   );
 };
