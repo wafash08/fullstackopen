@@ -28,7 +28,9 @@ function Total({ total }) {
 
 function Course({ course }) {
   const { name, parts } = course;
-  const total = parts[0].exercises + parts[1].exercises + parts[2].exercises;
+  const total = parts.reduce((sum, current) => {
+    return sum + current.exercises;
+  }, 0);
   return (
     <>
       <Header name={name} />
