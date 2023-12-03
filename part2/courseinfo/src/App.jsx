@@ -22,11 +22,18 @@ function Content({ parts }) {
   );
 }
 
+function Total({ total }) {
+  return <p>Total of {total} exercises</p>;
+}
+
 function Course({ course }) {
+  const { name, parts } = course;
+  const total = parts[0].exercises + parts[1].exercises + parts[2].exercises;
   return (
     <>
-      <Header name={course.name} />
-      <Content parts={course.parts} />
+      <Header name={name} />
+      <Content parts={parts} />
+      <Total total={total} />
     </>
   );
 }
