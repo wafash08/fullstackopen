@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import Filter from "./components/filter";
 import AddPersonForm from "./components/add-person-form";
 import Persons from "./components/persons";
+import { createPerson, getAllPersons } from "./services/person";
 
 function App() {
   const [persons, setPersons] = useState([]);
@@ -11,9 +11,9 @@ function App() {
   const [filterName, setFilterName] = useState("");
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/persons")
-      .then(response => setPersons(response.data));
+    getAllPersons().then(initialPersons => {
+      setPersons(initialPersons);
+    });
   }, []);
 
   const handleAddPerson = e => {
@@ -24,22 +24,19 @@ function App() {
       return;
     }
     const newPerson = { name: newName, number: newNumber };
-    axios.post("http://localhost:3001/persons", newPerson).then(response => {
-      console.log(response.data);
-      setPersons([...persons, response.data]);
+    createPerson(newPerson).then(person => {
+      console.log(person);
+      setPersons([...persons, person]);
       setNewName("");
       setNewNumber("");
     });
   };
 
-  let filteredPerson;
-  if (filterName) {
-    filteredPerson = persons.filter(person =>
-      person.name.toLowerCase().includes(filterName.toLowerCase())
-    );
-  } else {
-    filteredPerson = persons;
-  }
+  let filteredPerson = filterName
+    ? persons.filter(person =>
+        person.name.toLowerCase().includes(filterName.toLowerCase())
+      )
+    : persons;
 
   return (
     <div>
