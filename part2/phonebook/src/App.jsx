@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Filter from "./components/filter";
 import AddPersonForm from "./components/add-person-form";
 import Persons from "./components/persons";
-import { createPerson, getAllPersons } from "./services/person";
+import { createPerson, deletePerson, getAllPersons } from "./services/person";
 
 function App() {
   const [persons, setPersons] = useState([]);
@@ -25,11 +25,24 @@ function App() {
     }
     const newPerson = { name: newName, number: newNumber };
     createPerson(newPerson).then(person => {
-      console.log(person);
       setPersons([...persons, person]);
       setNewName("");
       setNewNumber("");
     });
+  };
+
+  const handleDeletePerson = personID => {
+    const personToDelete = persons.find(person => person.id === personID);
+    const hasConfirmation = window.confirm(
+      `Do you want to delete ${personToDelete.name}?`
+    );
+    if (hasConfirmation) {
+      deletePerson(personID);
+      const personsWithoutDeletedPerson = persons.filter(
+        person => person.id !== personID
+      );
+      setPersons(personsWithoutDeletedPerson);
+    }
   };
 
   let filteredPerson = filterName
@@ -56,7 +69,7 @@ function App() {
       {filteredPerson.length <= 0 ? (
         <p>No person found</p>
       ) : (
-        <Persons persons={filteredPerson} />
+        <Persons persons={filteredPerson} onDeletePerson={handleDeletePerson} />
       )}
     </div>
   );
