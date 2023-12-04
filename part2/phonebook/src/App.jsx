@@ -12,7 +12,7 @@ function App() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/persons")
+      .get("http://localhost:3001/persons")
       .then(response => setPersons(response.data));
   }, []);
 
@@ -24,16 +24,22 @@ function App() {
       return;
     }
     const newPerson = { name: newName, number: newNumber };
-    setPersons([...persons, newPerson]);
-    setNewName("");
-    setNewNumber("");
+    axios.post("http://localhost:3001/persons", newPerson).then(response => {
+      console.log(response.data);
+      setPersons([...persons, response.data]);
+      setNewName("");
+      setNewNumber("");
+    });
   };
 
-  const filteredPerson = persons.filter(person =>
-    person.name.toLowerCase().includes(filterName.toLowerCase())
-  );
-
-  console.log("filteredPerson >> ", filteredPerson);
+  let filteredPerson;
+  if (filterName) {
+    filteredPerson = persons.filter(person =>
+      person.name.toLowerCase().includes(filterName.toLowerCase())
+    );
+  } else {
+    filteredPerson = persons;
+  }
 
   return (
     <div>

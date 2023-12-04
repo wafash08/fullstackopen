@@ -8,5 +8,5 @@ function Person({ person }) {
 }
 
 export default function Persons({ persons }) {
-  return persons.map(person => <Person person={person} key={person.name} />);
+  return persons.map(person => <Person person={person} key={person.id} />);
 }
