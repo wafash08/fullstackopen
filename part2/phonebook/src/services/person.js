@@ -14,3 +14,8 @@ export async function createPerson(newPerson) {
 export async function deletePerson(personID) {
   return axios.delete(`${baseURL}/${personID}`);
 }
+
+export async function updatePerson(personID, changedPerson) {
+  const req = axios.put(`${baseURL}/${personID}`, changedPerson);
+  return req.then(res => res.data);
+}
