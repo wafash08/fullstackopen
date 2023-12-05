@@ -10,9 +10,10 @@ import {
   updatePerson,
 } from "./services/person";
 
-function Notification({ message }) {
-  const style = {
-    color: "green",
+function Notification({ notification }) {
+  const { message, type } = notification;
+
+  const baseStyle = {
     background: "lightgrey",
     fontSize: "20px",
     borderStyle: "solid",
@@ -21,6 +22,11 @@ function Notification({ message }) {
     marginBottom: "10px",
   };
 
+  const style =
+    type === "success"
+      ? { ...baseStyle, color: "green" }
+      : { ...baseStyle, color: "red" };
+
   if (message === null) {
     return null;
   }
@@ -28,12 +34,20 @@ function Notification({ message }) {
   return <div style={style}>{message}</div>;
 }
 
+const NOTIFICATION_TYPES = {
+  success: "success",
+  error: "error",
+};
+
 function App() {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filterName, setFilterName] = useState("");
-  const [notification, setNotification] = useState(null);
+  const [notification, setNotification] = useState({
+    message: null,
+    type: NOTIFICATION_TYPES["success"],
+  });
 
   useEffect(() => {
     getAllPersons().then(initialPersons => {
@@ -55,26 +69,53 @@ function App() {
       }
 
       const changedPerson = { ...hasNewName, number: newNumber };
-      updatePerson(changedPerson.id, changedPerson).then(res => {
-        setPersons(
-          persons.map(person => (person.id === changedPerson.id ? res : person))
-        );
-        setNotification(`Succesfully changed ${res.name}`);
-        setTimeout(() => {
-          setNotification(null);
-        }, 3000);
-        setNewName("");
-        setNewNumber("");
-      });
+      updatePerson(changedPerson.id, changedPerson)
+        .then(res => {
+          setPersons(
+            persons.map(person =>
+              person.id === changedPerson.id ? res : person
+            )
+          );
+          setNotification({
+            message: `Succesfully changed ${res.name}`,
+            type: NOTIFICATION_TYPES["success"],
+          });
+          setTimeout(() => {
+            setNotification({
+              message: null,
+            });
+          }, 3000);
+          setNewName("");
+          setNewNumber("");
+        })
+        .catch(() => {
+          setNotification({
+            message: `Information of ${hasNewName.name} has already been removed from server`,
+            type: NOTIFICATION_TYPES["error"],
+          });
+          setTimeout(() => {
+            setNotification({
+              message: null,
+            });
+          }, 3000);
+          setPersons(persons.filter(person => person.id !== hasNewName.id));
+          setNewName("");
+          setNewNumber("");
+        });
       return;
     }
 
     const newPerson = { name: newName, number: newNumber };
     createPerson(newPerson).then(person => {
       setPersons([...persons, person]);
-      setNotification(`Added ${person.name}`);
+      setNotification({
+        message: `Added ${person.name}`,
+        type: NOTIFICATION_TYPES["success"],
+      });
       setTimeout(() => {
-        setNotification(null);
+        setNotification({
+          message: null,
+        });
       }, 3000);
       setNewName("");
       setNewNumber("");
@@ -104,7 +145,7 @@ function App() {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={notification} />
+      <Notification notification={notification} />
       <Filter
         filterName={filterName}
         onFilterName={e => setFilterName(e.target.value)}
