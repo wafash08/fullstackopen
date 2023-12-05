@@ -19,7 +19,7 @@ function Country({ country }) {
           return <li key={language}>{language}</li>;
         })}
       </ul>
-      <div>
+      <div style={{ marginBlock: "1.5rem" }}>
         <img src={flag} alt={country.flags.alt} style={{ width: "100%" }} />
       </div>
     </div>
@@ -27,6 +27,7 @@ function Country({ country }) {
 }
 
 function Countries({ countries }) {
+  const [showCountry, setShowCountry] = useState("");
   if (countries.length === 0) {
     return <p>No country found</p>;
   }
@@ -40,7 +41,24 @@ function Countries({ countries }) {
   ) : (
     <ul>
       {countries.map(country => {
-        return <li key={country.name.common}>{country.name.common}</li>;
+        const name = country.name.common;
+        return (
+          <li key={name}>
+            <span>{name}</span>
+            {showCountry === name ? (
+              <button type='button' onClick={() => setShowCountry("")}>
+                close
+              </button>
+            ) : (
+              <button type='button' onClick={() => setShowCountry(name)}>
+                show
+              </button>
+            )}
+            {showCountry === name ? (
+              <Country country={country} key={name} />
+            ) : null}
+          </li>
+        );
       })}
     </ul>
   );
@@ -61,8 +79,6 @@ function App() {
         country.name.common.toLowerCase().includes(search.toLocaleLowerCase())
       )
     : [];
-
-  console.log("filteredCountries >> ", filteredCountries);
 
   return (
     <div>
