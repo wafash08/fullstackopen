@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
 import Filter from "./components/filter";
 import AddPersonForm from "./components/add-person-form";
@@ -9,11 +10,30 @@ import {
   updatePerson,
 } from "./services/person";
 
+function Notification({ message }) {
+  const style = {
+    color: "green",
+    background: "lightgrey",
+    fontSize: "20px",
+    borderStyle: "solid",
+    borderRadius: "5px",
+    padding: "10px",
+    marginBottom: "10px",
+  };
+
+  if (message === null) {
+    return null;
+  }
+
+  return <div style={style}>{message}</div>;
+}
+
 function App() {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filterName, setFilterName] = useState("");
+  const [notification, setNotification] = useState(null);
 
   useEffect(() => {
     getAllPersons().then(initialPersons => {
@@ -24,6 +44,7 @@ function App() {
   const handleAddPerson = e => {
     e.preventDefault();
     const hasNewName = persons.find(person => person.name === newName);
+
     if (hasNewName) {
       const hasConfirmation = window.confirm(
         `${newName} is already added to phonebook, replace the old number to the new one?`
@@ -38,6 +59,12 @@ function App() {
         setPersons(
           persons.map(person => (person.id === changedPerson.id ? res : person))
         );
+        setNotification(`Succesfully changed ${res.name}`);
+        setTimeout(() => {
+          setNotification(null);
+        }, 3000);
+        setNewName("");
+        setNewNumber("");
       });
       return;
     }
@@ -45,6 +72,10 @@ function App() {
     const newPerson = { name: newName, number: newNumber };
     createPerson(newPerson).then(person => {
       setPersons([...persons, person]);
+      setNotification(`Added ${person.name}`);
+      setTimeout(() => {
+        setNotification(null);
+      }, 3000);
       setNewName("");
       setNewNumber("");
     });
@@ -73,6 +104,7 @@ function App() {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notification} />
       <Filter
         filterName={filterName}
         onFilterName={e => setFilterName(e.target.value)}
