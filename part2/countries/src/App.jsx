@@ -77,11 +77,7 @@ function Countries({ countries }) {
   }
 
   if (countries.length === 1) {
-    return (
-      <>
-        <CountryWithWeather country={countries[0]} />;
-      </>
-    );
+    return <CountryWithWeather country={countries[0]} />;
   }
 
   return countries.length > 10 ? (
