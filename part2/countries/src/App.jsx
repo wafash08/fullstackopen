@@ -7,7 +7,7 @@ import { getWeather } from "./services/weather";
 function CountryWithWeather({ country }) {
   const [latitude, longitude] = country.latlng;
   const [weather, setWeather] = useState({});
-  const capitals = country.capital ? country.capital[0] : country.name.common;
+  const capital = country.capital ? country.capital[0] : country.name.common;
 
   useEffect(() => {
     getWeather({ lat: latitude, lon: longitude }).then(res => setWeather(res));
@@ -16,7 +16,7 @@ function CountryWithWeather({ country }) {
   return (
     <>
       <Country country={country} />
-      <Weather weather={weather} capital={capitals} />
+      <Weather weather={weather} capital={capital} />
     </>
   );
 }
@@ -48,13 +48,13 @@ function Weather({ weather, capital }) {
 }
 
 function Country({ country }) {
-  const capitals = country.capital ? country.capital[0] : country.name.common;
+  const capital = country.capital ? country.capital[0] : country.name.common;
   const flag = country.flags.svg ? country.flags.svg : country.flags.png;
 
   return (
     <div>
       <h1>{country.name.common}</h1>
-      <p>capital {capitals}</p>
+      <p>capital {capital}</p>
       <p>area {country.area}</p>
       <h2>languages:</h2>
       <ul>
