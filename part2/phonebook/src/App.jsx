@@ -23,7 +23,7 @@ function Notification({ notification }) {
   };
 
   const style =
-    type === "success"
+    type === NOTIFICATION_TYPES["success"]
       ? { ...baseStyle, color: "green" }
       : { ...baseStyle, color: "red" };
 
@@ -106,21 +106,37 @@ function App() {
     }
 
     const newPerson = { name: newName, number: newNumber };
-    createPerson(newPerson).then(person => {
-      setPersons([...persons, person]);
-      setNotification({
-        message: `Added ${person.name}`,
-        type: NOTIFICATION_TYPES["success"],
-      });
-      setTimeout(() => {
+    createPerson(newPerson)
+      .then(person => {
+        setPersons([...persons, person]);
         setNotification({
-          message: null,
+          message: `Added ${person.name}`,
+          type: NOTIFICATION_TYPES["success"],
         });
-      }, 3000);
-      setNewName("");
-      setNewNumber("");
-    });
+        setTimeout(() => {
+          setNotification({
+            message: null,
+          });
+        }, 3000);
+        setNewName("");
+        setNewNumber("");
+      })
+      .catch(error => {
+        if (error.response) {
+          setNotification({
+            message: error.response.data.error,
+            type: NOTIFICATION_TYPES["error"],
+          });
+          setTimeout(() => {
+            setNotification({
+              message: null,
+            });
+          }, 3000);
+        }
+      });
   };
+
+  console.log("notification.message >> ", notification.message);
 
   const handleDeletePerson = personID => {
     const personToDelete = persons.find(person => person.id === personID);
