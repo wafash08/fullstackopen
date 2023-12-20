@@ -43,7 +43,7 @@ const reducer = (state = initialState, action) => {
 	}
 };
 
-export function voteAnecdote(id) {
+export function vote(id) {
 	return {
 		type: 'VOTE',
 		payload: {
@@ -52,7 +52,7 @@ export function voteAnecdote(id) {
 	};
 }
 
-export function createAnecdote(anecdote) {
+export function create(anecdote) {
 	return {
 		type: 'NEW_ANECDOTE',
 		payload: {
