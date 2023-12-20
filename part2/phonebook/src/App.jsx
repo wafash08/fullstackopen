@@ -136,8 +136,6 @@ function App() {
       });
   };
 
-  console.log("notification.message >> ", notification.message);
-
   const handleDeletePerson = personID => {
     const personToDelete = persons.find(person => person.id === personID);
     const hasConfirmation = window.confirm(
