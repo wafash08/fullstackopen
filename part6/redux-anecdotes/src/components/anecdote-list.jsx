@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { voteAnecdote } from '../reducers/anecdoteReducer';
+import { voteAnecdote } from '../reducers/anecdote-reducer';
 
 export default function AnecdoteList() {
 	const anecdoteList = useSelector(({ anecdotes, filter }) => {
@@ -19,6 +19,19 @@ export default function AnecdoteList() {
 
 	const vote = id => {
 		dispatch(voteAnecdote({ id }));
+		const anecdoteToVote = anecdoteList.find(a => a.id === id);
+		dispatch({
+			type: 'notification/show',
+			payload: {
+				message: `you think that "${anecdoteToVote.content}" is funny? Yeah, i guess i think so😂`,
+			},
+		});
+		setTimeout(() => {
+			dispatch({
+				type: 'notification/hide',
+				payload: { message: null },
+			});
+		}, 5000);
 	};
 
 	return anecdoteList.map(anecdote => {
