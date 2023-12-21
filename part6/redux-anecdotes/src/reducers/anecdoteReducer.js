@@ -1,3 +1,5 @@
+import { createSlice } from '@reduxjs/toolkit';
+
 const anecdotesAtStart = [
 	'If it hurts, do it more often',
 	'Adding manpower to a late software project makes it later!',
@@ -7,58 +9,44 @@ const anecdotesAtStart = [
 	'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.',
 ];
 
-const getId = () => (100000 * Math.random()).toFixed(0);
+function getId() {
+	return (100000 * Math.random()).toFixed(0);
+}
 
-const asObject = anecdote => {
+function asObject(anecdote) {
 	return {
 		content: anecdote,
 		id: getId(),
 		votes: 0,
 	};
-};
+}
 
 const initialState = anecdotesAtStart.map(asObject);
 
-const reducer = (state = initialState, action) => {
-	switch (action.type) {
-		case 'VOTE': {
+const anecdoteReducer = createSlice({
+	name: 'anecdote',
+	initialState,
+	reducers: {
+		voteAnecdote(state, action) {
 			const anecdoteToVote = state.find(s => s.id === action.payload.id);
+			if (!anecdoteToVote) {
+				return `anecdote with ${id} is not found`;
+			}
 			const anecdoteAfterVote = {
 				...anecdoteToVote,
 				votes: anecdoteToVote.votes + 1,
 			};
+
 			return state.map(anecdote =>
 				anecdote.id === anecdoteAfterVote.id ? anecdoteAfterVote : anecdote
 			);
-		}
-		case 'NEW_ANECDOTE': {
-			const { content, id, votes } = action.payload;
-			return [...state, { content, id, votes }];
-		}
-		default: {
-			return state;
-		}
-	}
-};
-
-export function vote(id) {
-	return {
-		type: 'VOTE',
-		payload: {
-			id,
 		},
-	};
-}
-
-export function create(anecdote) {
-	return {
-		type: 'NEW_ANECDOTE',
-		payload: {
-			content: anecdote,
-			id: getId(),
-			votes: 0,
+		createAnecdote(state, action) {
+			const { content } = action.payload;
+			return state.concat({ content, id: getId(), votes: 0 });
 		},
-	};
-}
+	},
+});
 
-export default reducer;
+export const { voteAnecdote, createAnecdote } = anecdoteReducer.actions;
+export default anecdoteReducer.reducer;
