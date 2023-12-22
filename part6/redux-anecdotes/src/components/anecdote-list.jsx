@@ -10,9 +10,7 @@ export default function AnecdoteList() {
 		// you have to copy the anecdotes lol
 		const anecdotesToSort = [...anecdotes];
 		if (!filter) {
-			return anecdotesToSort.sort(function compare(a, b) {
-				return b.votes - a.votes;
-			});
+			return anecdotesToSort.sort((a, b) => b.votes - a.votes);
 		}
 		return anecdotesToSort
 			.filter(a => a.content.toLowerCase().includes(filter.toLowerCase()))
