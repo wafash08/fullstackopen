@@ -7,14 +7,13 @@ const AnecdoteForm = () => {
 		mutationFn: createNewAnecdote,
 		onSuccess: newAnecdote => {
 			const anecdotes = queryClient.getQueryData(['anecdotes']);
-			queryClient.setQueryData(['anecdotes'], anecdotes.concate(newAnecdote));
+			queryClient.setQueryData(['anecdotes'], anecdotes.concat(newAnecdote));
 		},
 	});
 	const onCreate = event => {
 		event.preventDefault();
 		const anecdote = event.target.anecdote.value;
 		event.target.anecdote.value = '';
-		console.log('new anecdote');
 		newAnecdoteMutation.mutate(anecdote);
 	};
 

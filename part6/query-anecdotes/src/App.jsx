@@ -1,7 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import AnecdoteForm from './components/AnecdoteForm';
 import Notification from './components/Notification';
-import { getAnecdotes } from './services/anecdotes';
+import { addVote, getAnecdotes } from './services/anecdotes';
 
 const App = () => {
 	const result = useQuery({
@@ -9,6 +9,18 @@ const App = () => {
 		queryFn: getAnecdotes,
 		retry: 1,
 		refetchOnWindowFocus: false,
+	});
+
+	const queryClient = useQueryClient();
+	const addVoteMutation = useMutation({
+		mutationFn: addVote,
+		onSuccess: anecdote => {
+			const anecdotes = queryClient.getQueryData(['anecdotes']);
+			queryClient.setQueryData(
+				['anecdotes'],
+				anecdotes.map(a => (a.id === anecdote.id ? anecdote : a))
+			);
+		},
 	});
 
 	console.log(JSON.parse(JSON.stringify(result)));
@@ -22,7 +34,7 @@ const App = () => {
 	}
 
 	const handleVote = anecdote => {
-		console.log('vote');
+		addVoteMutation.mutate({ ...anecdote, votes: anecdote.votes + 1 });
 	};
 
 	const anecdotes = result.data;
