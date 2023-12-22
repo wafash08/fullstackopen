@@ -4,19 +4,17 @@ import {
 	hideNotification,
 	showNotification,
 } from '../reducers/notification-reducer';
-import { createNew } from '../services/anecdotes';
 
 export default function AnecdoteForm() {
 	const dispatch = useDispatch();
-	const create = async event => {
+	const create = event => {
 		event.preventDefault();
 		const anecdote = event.target.anecdote.value;
 		event.target.anecdote.value = '';
-		const newAnecdote = await createNew(anecdote);
-		dispatch(createAnecdote(newAnecdote));
+		dispatch(createAnecdote(anecdote));
 		dispatch(
 			showNotification({
-				message: `anecdote ${newAnecdote.content} has successfully created`,
+				message: `anecdote ${anecdote} has successfully created`,
 			})
 		);
 		setTimeout(() => {
