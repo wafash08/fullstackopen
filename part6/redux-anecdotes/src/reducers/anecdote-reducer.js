@@ -42,8 +42,7 @@ const anecdoteReducer = createSlice({
 			);
 		},
 		createAnecdote(state, action) {
-			const { content } = action.payload;
-			return state.concat({ content, id: getId(), votes: 0 });
+			return state.concat(action.payload);
 		},
 		setAnecdotes(state, action) {
 			return action.payload;
