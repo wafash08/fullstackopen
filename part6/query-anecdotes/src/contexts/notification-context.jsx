@@ -11,7 +11,7 @@ const notificationReducer = (state, action) => {
 			return null;
 		}
 		default: {
-			return state;
+			throw Error(`action "${action.type}" is not supported`);
 		}
 	}
 };
@@ -40,8 +40,7 @@ export function useNotification() {
 			`You have to use notificationContext inside ${notificationContext.displayName}`
 		);
 	}
-	console.log('context >> ', context);
-	console.log('context displayName >> ', notificationContext.displayName);
+
 	return context[0];
 }
 

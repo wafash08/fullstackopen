@@ -8,8 +8,12 @@ export async function getAnecdotes() {
 }
 
 export async function createNewAnecdote(anecdote) {
-	const response = await axios.post(baseURL, { content: anecdote, votes: 0 });
-	return response.data;
+	try {
+		const response = await axios.post(baseURL, { content: anecdote, votes: 0 });
+		return response.data;
+	} catch (error) {
+		throw Error(error.response.data.error);
+	}
 }
 
 export async function addVote(anecdote) {

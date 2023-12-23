@@ -6,20 +6,23 @@ const AnecdoteForm = () => {
 	const queryClient = useQueryClient();
 	const dispatch = useNotify();
 
-	const newAnecdoteMutation = useMutation({
-		mutationFn: createNewAnecdote,
-		onSuccess: newAnecdote => {
-			const anecdotes = queryClient.getQueryData(['anecdotes']);
-			queryClient.setQueryData(['anecdotes'], anecdotes.concat(newAnecdote));
-		},
-	});
-
 	const notifyWith = (message, timeout = 5) => {
 		dispatch({ type: 'SET', payload: { message } });
 		setTimeout(() => {
 			dispatch({ type: 'CLEAR' });
 		}, timeout * 1000);
 	};
+
+	const newAnecdoteMutation = useMutation({
+		mutationFn: createNewAnecdote,
+		onSuccess: newAnecdote => {
+			const anecdotes = queryClient.getQueryData(['anecdotes']);
+			queryClient.setQueryData(['anecdotes'], anecdotes.concat(newAnecdote));
+		},
+		onError: error => {
+			notifyWith(error.message);
+		},
+	});
 
 	const onCreate = event => {
 		event.preventDefault();
