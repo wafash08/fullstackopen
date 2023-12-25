@@ -3,17 +3,20 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 import Blog from './blog';
 import { LS_BLOGLIST_USER } from '../App';
+import { useSelector } from 'react-redux';
 
-export default function Bloglist({ blogs, onRemoveBlogBy, onUpdateLikesTo }) {
+export default function Bloglist({ onRemoveBlogBy, onUpdateLikesTo }) {
 	const [sortBy, setSortBy] = useState('desc');
+	const blogs = useSelector((state) => {
+		const copyBlogs = [...state.blogs];
+		return sortBy === 'asc'
+			? copyBlogs.sort((a, b) => a.likes - b.likes)
+			: copyBlogs.sort((a, b) => b.likes - a.likes);
+	});
+
 	const userFromLocalStorage = useState(() =>
 		JSON.parse(window.localStorage.getItem(LS_BLOGLIST_USER))
 	);
-
-	let sortedBlogs =
-		sortBy === 'asc'
-			? blogs.sort((a, b) => a.likes - b.likes)
-			: blogs.sort((a, b) => b.likes - a.likes);
 
 	const sortByLikes = () => {
 		switch (sortBy) {
@@ -40,7 +43,7 @@ export default function Bloglist({ blogs, onRemoveBlogBy, onUpdateLikesTo }) {
 				{sortBy === 'asc' ? 'least to most' : 'most to least'})
 			</button>
 			<ul className='bloglist'>
-				{sortedBlogs.map((blog) => (
+				{blogs.map((blog) => (
 					<Blog
 						key={blog.id}
 						blog={blog}
@@ -55,7 +58,6 @@ export default function Bloglist({ blogs, onRemoveBlogBy, onUpdateLikesTo }) {
 }
 
 Bloglist.propTypes = {
-	blogs: PropTypes.array.isRequired,
 	onRemoveBlogBy: PropTypes.func.isRequired,
 	onUpdateLikesTo: PropTypes.func.isRequired,
 };

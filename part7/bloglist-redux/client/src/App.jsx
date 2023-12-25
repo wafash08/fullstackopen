@@ -1,13 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
+import { useDispatch } from 'react-redux';
 import Notification from './components/notification';
 import LoginForm from './components/login-form';
 import Togglable from './components/togglable';
 import CreateNewBlogForm from './components/create-new-blog-form';
 import Bloglist from './components/bloglist';
-import { addLikeTo, create, getAll, remove, setToken } from './services/blogs';
+import { addLikeTo, create, remove, setToken } from './services/blogs';
 import { login } from './services/auth';
-import { useDispatch } from 'react-redux';
 import { setNotification } from './reducers/notificationReducer';
+import { createBlog, initializeBlog } from './reducers/blogReducer';
 
 export const LS_BLOGLIST_USER = 'loggedBloglistUser';
 export default function App() {
@@ -17,11 +18,7 @@ export default function App() {
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		async function getAllBlogs() {
-			const blogs = await getAll();
-			setBlogs(blogs);
-		}
-		getAllBlogs();
+		dispatch(initializeBlog());
 	}, []);
 
 	useEffect(() => {
@@ -61,18 +58,17 @@ export default function App() {
 	const createNewBlog = async (blog) => {
 		try {
 			newBlogFormRef.current.toggleVisibility();
-			const newBlog = await create(blog);
 			const newBlogWithUser = {
-				...newBlog,
+				...blog,
 				user: {
-					name: user.name,
 					username: user.username,
+					name: user.name,
 				},
 			};
-			setBlogs([...blogs, newBlogWithUser]);
+			dispatch(createBlog(newBlogWithUser));
 			dispatch(
 				setNotification({
-					message: `a new blog ${newBlog.title} by ${newBlog.author} added`,
+					message: `a new blog ${blog.title} by ${blog.author} added`,
 					type: 'success',
 				})
 			);
@@ -147,7 +143,6 @@ export default function App() {
 						<CreateNewBlogForm onCreateNewBlog={createNewBlog} />
 					</Togglable>
 					<Bloglist
-						blogs={blogs}
 						onRemoveBlogBy={removeBlogBy}
 						onUpdateLikesTo={updateLikesTo}
 					/>
