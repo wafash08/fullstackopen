@@ -1,11 +1,10 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
 import { useState } from 'react';
-import PropTypes from 'prop-types';
 import Blog from './blog';
 import { LS_BLOGLIST_USER } from '../App';
 import { useSelector } from 'react-redux';
 
-export default function Bloglist({ onRemoveBlogBy, onUpdateLikesTo }) {
+export default function Bloglist({ onRemoveBlogBy }) {
 	const [sortBy, setSortBy] = useState('desc');
 	const blogs = useSelector((state) => {
 		const copyBlogs = [...state.blogs];
@@ -48,7 +47,6 @@ export default function Bloglist({ onRemoveBlogBy, onUpdateLikesTo }) {
 						key={blog.id}
 						blog={blog}
 						onRemoveBlogBy={onRemoveBlogBy}
-						onUpdateLikesTo={onUpdateLikesTo}
 						user={userFromLocalStorage[0]}
 					/>
 				))}
@@ -56,8 +54,3 @@ export default function Bloglist({ onRemoveBlogBy, onUpdateLikesTo }) {
 		</>
 	);
 }
-
-Bloglist.propTypes = {
-	onRemoveBlogBy: PropTypes.func.isRequired,
-	onUpdateLikesTo: PropTypes.func.isRequired,
-};

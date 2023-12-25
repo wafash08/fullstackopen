@@ -1,9 +1,10 @@
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { addLikeToBlog, removeBlogByID } from '../reducers/blogReducer';
 
-export default function Blog({ blog, onRemoveBlogBy, onUpdateLikesTo, user }) {
+export default function Blog({ blog, user }) {
 	const [showDetails, setShowDetails] = useState(false);
-	const [like, setLike] = useState(blog.likes);
-
+	const dispatch = useDispatch();
 	const showDeleteButton = blog.user.username === user.username;
 
 	const styles = {
@@ -15,23 +16,42 @@ export default function Blog({ blog, onRemoveBlogBy, onUpdateLikesTo, user }) {
 		marginBottom: 5,
 	};
 
-	const handleLike = async () => {
-		setLike(like + 1);
-		const updatedBlog = {
-			...blog,
-			likes: like + 1,
-		};
-		onUpdateLikesTo(blog.id, updatedBlog);
+	const handleLike = async (id, blogToLike) => {
+		try {
+			const updatedBlog = {
+				...blogToLike,
+				likes: blogToLike.likes + 1,
+			};
+			dispatch(addLikeToBlog(id, updatedBlog));
+		} catch (error) {
+			console.error(error);
+			dispatch(
+				setNotification({
+					message: error.response.data.error,
+					type: 'error',
+				})
+			);
+		}
 	};
 
-	const handleRemoveBlogBy = async () => {
-		const hasConfirmation = window.confirm(
-			`Remove blog ${blog.title} by ${blog.author}?`
-		);
-		if (!hasConfirmation) {
-			return;
+	const handleRemoveBlogByID = async (id) => {
+		try {
+			const hasConfirmation = window.confirm(
+				`Remove blog ${blog.title} by ${blog.author}?`
+			);
+			if (!hasConfirmation) {
+				return;
+			}
+			dispatch(removeBlogByID(id));
+		} catch (error) {
+			console.error(error);
+			dispatch(
+				setNotification({
+					message: error.response.data.error,
+					type: 'error',
+				})
+			);
 		}
-		onRemoveBlogBy(blog.id);
 	};
 
 	return (
@@ -54,8 +74,12 @@ export default function Blog({ blog, onRemoveBlogBy, onUpdateLikesTo, user }) {
 						</a>
 					</p>
 					<p>
-						<span>{like}</span>
-						<button type='button' onClick={handleLike} data-test='like_button'>
+						<span>{blog.likes}</span>
+						<button
+							type='button'
+							onClick={() => handleLike(blog.id, blog)}
+							data-test='like_button'
+						>
 							like
 						</button>
 					</p>
@@ -63,7 +87,7 @@ export default function Blog({ blog, onRemoveBlogBy, onUpdateLikesTo, user }) {
 					{showDeleteButton ? (
 						<button
 							type='button'
-							onClick={handleRemoveBlogBy}
+							onClick={() => handleRemoveBlogByID(blog.id)}
 							data-test='remove_button'
 						>
 							remove

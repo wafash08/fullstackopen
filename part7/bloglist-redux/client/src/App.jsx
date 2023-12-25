@@ -5,15 +5,18 @@ import LoginForm from './components/login-form';
 import Togglable from './components/togglable';
 import CreateNewBlogForm from './components/create-new-blog-form';
 import Bloglist from './components/bloglist';
-import { addLikeTo, create, remove, setToken } from './services/blogs';
+import { remove, setToken } from './services/blogs';
 import { login } from './services/auth';
 import { setNotification } from './reducers/notificationReducer';
-import { createBlog, initializeBlog } from './reducers/blogReducer';
+import {
+	addLikeToBlog,
+	createBlog,
+	initializeBlog,
+} from './reducers/blogReducer';
 
 export const LS_BLOGLIST_USER = 'loggedBloglistUser';
 export default function App() {
 	const [user, setUser] = useState(null);
-	const [blogs, setBlogs] = useState([]);
 	const newBlogFormRef = useRef(null);
 	const dispatch = useDispatch();
 
@@ -83,44 +86,6 @@ export default function App() {
 		}
 	};
 
-	const updateLikesTo = async (id, updatedBlog) => {
-		try {
-			const result = await addLikeTo(id, updatedBlog);
-			const blogsAfterUpdateLikes = blogs.map((b) => {
-				return b.id === result.id ? { ...b, result } : b;
-			});
-			setBlogs(blogsAfterUpdateLikes);
-		} catch (error) {
-			console.error(error);
-			dispatch(
-				setNotification({
-					message: error.response.data.error,
-					type: 'error',
-				})
-			);
-		}
-	};
-
-	const removeBlogBy = async (id) => {
-		try {
-			const blogToRemove = blogs.find((b) => b.id === id);
-			if (!blogToRemove) {
-				return;
-			}
-			await remove(id);
-			setBlogs(blogs.filter((b) => b.id !== id));
-		} catch (error) {
-			dispatch(
-				setNotification({
-					message:
-						'blog you are trying to remove has already removed from the server',
-					type: 'error',
-				})
-			);
-			setBlogs(blogs.filter((b) => b.id !== id));
-		}
-	};
-
 	return (
 		<div>
 			{user === null ? <h2>Log in to application</h2> : <h2>blogs</h2>}
@@ -142,10 +107,7 @@ export default function App() {
 					<Togglable buttonLable={'create new blog'} ref={newBlogFormRef}>
 						<CreateNewBlogForm onCreateNewBlog={createNewBlog} />
 					</Togglable>
-					<Bloglist
-						onRemoveBlogBy={removeBlogBy}
-						onUpdateLikesTo={updateLikesTo}
-					/>
+					<Bloglist />
 				</>
 			)}
 		</div>

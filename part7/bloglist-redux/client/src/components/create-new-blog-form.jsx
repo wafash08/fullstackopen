@@ -3,7 +3,7 @@ import { useState } from 'react';
 export default function CreateNewBlogForm({ onCreateNewBlog }) {
 	const [blog, setBlog] = useState({ title: '', author: '', url: '' });
 
-	const handleCreateBlog = e => {
+	const handleCreateBlog = (e) => {
 		e.preventDefault();
 		onCreateNewBlog(blog);
 		setBlog({
@@ -22,7 +22,7 @@ export default function CreateNewBlogForm({ onCreateNewBlog }) {
 					id='title'
 					name='title'
 					value={blog.title}
-					onChange={e => setBlog({ ...blog, title: e.target.value })}
+					onChange={(e) => setBlog({ ...blog, title: e.target.value })}
 					data-test='title'
 				/>
 			</div>
@@ -33,7 +33,7 @@ export default function CreateNewBlogForm({ onCreateNewBlog }) {
 					id='author'
 					name='author'
 					value={blog.author}
-					onChange={e => setBlog({ ...blog, author: e.target.value })}
+					onChange={(e) => setBlog({ ...blog, author: e.target.value })}
 					data-test='author'
 				/>
 			</div>
@@ -44,7 +44,7 @@ export default function CreateNewBlogForm({ onCreateNewBlog }) {
 					id='url'
 					name='url'
 					value={blog.url}
-					onChange={e => setBlog({ ...blog, url: e.target.value })}
+					onChange={(e) => setBlog({ ...blog, url: e.target.value })}
 					data-test='url'
 				/>
 			</div>
