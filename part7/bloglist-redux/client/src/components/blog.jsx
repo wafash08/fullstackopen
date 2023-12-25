@@ -48,7 +48,11 @@ export default function Blog({ blog, onRemoveBlogBy, onUpdateLikesTo, user }) {
 			</div>
 			{showDetails ? (
 				<div>
-					<p>{blog.url}</p>
+					<p>
+						<a href={`${blog.url}`} target='_blank' rel='noreferrer'>
+							{blog.url}
+						</a>
+					</p>
 					<p>
 						<span>{like}</span>
 						<button type='button' onClick={handleLike} data-test='like_button'>

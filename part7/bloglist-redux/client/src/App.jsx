@@ -6,16 +6,15 @@ import CreateNewBlogForm from './components/create-new-blog-form';
 import Bloglist from './components/bloglist';
 import { addLikeTo, create, getAll, remove, setToken } from './services/blogs';
 import { login } from './services/auth';
+import { useDispatch } from 'react-redux';
+import { setNotification } from './reducers/notificationReducer';
 
 export const LS_BLOGLIST_USER = 'loggedBloglistUser';
 export default function App() {
 	const [user, setUser] = useState(null);
 	const [blogs, setBlogs] = useState([]);
-	const [notification, setNotification] = useState({
-		message: null,
-		type: null,
-	});
 	const newBlogFormRef = useRef(null);
+	const dispatch = useDispatch();
 
 	useEffect(() => {
 		async function getAllBlogs() {
@@ -45,13 +44,12 @@ export default function App() {
 			setToken(loggedInUser.token);
 		} catch (error) {
 			console.log(error);
-			setNotification({
-				message: error.response.data.error,
-				type: 'error',
-			});
-			setTimeout(() => {
-				setNotification({ message: null, type: null });
-			}, 2500);
+			dispatch(
+				setNotification({
+					message: error.response.data.error,
+					type: 'error',
+				})
+			);
 		}
 	};
 
@@ -60,7 +58,7 @@ export default function App() {
 		window.localStorage.removeItem(LS_BLOGLIST_USER);
 	};
 
-	const createNewBlog = async blog => {
+	const createNewBlog = async (blog) => {
 		try {
 			newBlogFormRef.current.toggleVisibility();
 			const newBlog = await create(blog);
@@ -72,62 +70,65 @@ export default function App() {
 				},
 			};
 			setBlogs([...blogs, newBlogWithUser]);
-			setNotification({
-				message: `a new blog ${newBlog.title} by ${newBlog.author} added`,
-				type: 'success',
-			});
-			setTimeout(() => {
-				setNotification({ message: null, type: null });
-			}, 2500);
+			dispatch(
+				setNotification({
+					message: `a new blog ${newBlog.title} by ${newBlog.author} added`,
+					type: 'success',
+				})
+			);
 		} catch (error) {
 			console.log(error);
-			setNotification({
-				message: error.response.data.error,
-				type: 'error',
-			});
-			setTimeout(() => {
-				setNotification({ message: null, type: null });
-			}, 2500);
+			dispatch(
+				setNotification({
+					message: error.response.data.error,
+					type: 'error',
+				})
+			);
 		}
 	};
 
 	const updateLikesTo = async (id, updatedBlog) => {
 		try {
 			const result = await addLikeTo(id, updatedBlog);
-			const blogsAfterUpdateLikes = blogs.map(b => {
+			const blogsAfterUpdateLikes = blogs.map((b) => {
 				return b.id === result.id ? { ...b, result } : b;
 			});
 			setBlogs(blogsAfterUpdateLikes);
 		} catch (error) {
 			console.error(error);
+			dispatch(
+				setNotification({
+					message: error.response.data.error,
+					type: 'error',
+				})
+			);
 		}
 	};
 
-	const removeBlogBy = async id => {
+	const removeBlogBy = async (id) => {
 		try {
-			const blogToRemove = blogs.find(b => b.id === id);
+			const blogToRemove = blogs.find((b) => b.id === id);
 			if (!blogToRemove) {
 				return;
 			}
 			await remove(id);
-			setBlogs(blogs.filter(b => b.id !== id));
+			setBlogs(blogs.filter((b) => b.id !== id));
 		} catch (error) {
-			setNotification({
-				message:
-					'blog you are trying to remove has already removed from the server',
-				type: 'error',
-			});
-			setTimeout(() => {
-				setNotification({ message: null });
-			}, 3000);
-			setBlogs(blogs.filter(b => b.id !== id));
+			dispatch(
+				setNotification({
+					message:
+						'blog you are trying to remove has already removed from the server',
+					type: 'error',
+				})
+			);
+			setBlogs(blogs.filter((b) => b.id !== id));
 		}
 	};
 
 	return (
 		<div>
 			{user === null ? <h2>Log in to application</h2> : <h2>blogs</h2>}
-			<Notification notification={notification} />
+			<Notification />
 			{user === null ? (
 				<LoginForm onLogin={handleLogin} />
 			) : (

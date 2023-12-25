@@ -1,4 +1,9 @@
-export default function Notification({ notification }) {
+import { useSelector } from 'react-redux';
+
+export default function Notification() {
+	const notification = useSelector((state) => {
+		return state.notification;
+	});
 	const { message, type } = notification;
 	const baseStyles = {
 		fontSize: '20px',

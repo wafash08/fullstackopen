@@ -1,7 +1,7 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-import Blog from './Blog';
+import Blog from './blog';
 import { LS_BLOGLIST_USER } from '../App';
 
 export default function Bloglist({ blogs, onRemoveBlogBy, onUpdateLikesTo }) {
@@ -40,7 +40,7 @@ export default function Bloglist({ blogs, onRemoveBlogBy, onUpdateLikesTo }) {
 				{sortBy === 'asc' ? 'least to most' : 'most to least'})
 			</button>
 			<ul className='bloglist'>
-				{sortedBlogs.map(blog => (
+				{sortedBlogs.map((blog) => (
 					<Blog
 						key={blog.id}
 						blog={blog}
