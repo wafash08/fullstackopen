@@ -6,16 +6,14 @@ import CreateNewBlogForm from './components/create-new-blog-form';
 import Bloglist from './components/bloglist';
 import { addLikeTo, create, getAll, remove, setToken } from './services/blogs';
 import { login } from './services/auth';
+import { useNotify } from './notification-context';
 
 export const LS_BLOGLIST_USER = 'loggedBloglistUser';
 export default function App() {
 	const [user, setUser] = useState(null);
 	const [blogs, setBlogs] = useState([]);
-	const [notification, setNotification] = useState({
-		message: null,
-		type: null,
-	});
 	const newBlogFormRef = useRef(null);
+	const notify = useNotify();
 
 	useEffect(() => {
 		async function getAllBlogs() {
@@ -45,13 +43,7 @@ export default function App() {
 			setToken(loggedInUser.token);
 		} catch (error) {
 			console.log(error);
-			setNotification({
-				message: error.response.data.error,
-				type: 'error',
-			});
-			setTimeout(() => {
-				setNotification({ message: null, type: null });
-			}, 2500);
+			notify({ message: error.response.data.error, type: 'error' });
 		}
 	};
 
@@ -72,22 +64,16 @@ export default function App() {
 				},
 			};
 			setBlogs([...blogs, newBlogWithUser]);
-			setNotification({
+			notify({
 				message: `a new blog ${newBlog.title} by ${newBlog.author} added`,
 				type: 'success',
 			});
-			setTimeout(() => {
-				setNotification({ message: null, type: null });
-			}, 2500);
 		} catch (error) {
 			console.log(error);
-			setNotification({
+			notify({
 				message: error.response.data.error,
 				type: 'error',
 			});
-			setTimeout(() => {
-				setNotification({ message: null, type: null });
-			}, 2500);
 		}
 	};
 
@@ -100,6 +86,10 @@ export default function App() {
 			setBlogs(blogsAfterUpdateLikes);
 		} catch (error) {
 			console.error(error);
+			notify({
+				message: error.response.data.error,
+				type: 'error',
+			});
 		}
 	};
 
@@ -112,14 +102,11 @@ export default function App() {
 			await remove(id);
 			setBlogs(blogs.filter((b) => b.id !== id));
 		} catch (error) {
-			setNotification({
+			notify({
 				message:
 					'blog you are trying to remove has already removed from the server',
 				type: 'error',
 			});
-			setTimeout(() => {
-				setNotification({ message: null });
-			}, 3000);
 			setBlogs(blogs.filter((b) => b.id !== id));
 		}
 	};
@@ -127,7 +114,7 @@ export default function App() {
 	return (
 		<div>
 			{user === null ? <h2>Log in to application</h2> : <h2>blogs</h2>}
-			<Notification notification={notification} />
+			<Notification />
 			{user === null ? (
 				<LoginForm onLogin={handleLogin} />
 			) : (
