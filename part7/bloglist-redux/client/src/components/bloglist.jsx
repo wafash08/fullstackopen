@@ -1,21 +1,24 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
 import { useState } from 'react';
 import Blog from './blog';
-import { LS_BLOGLIST_USER } from '../App';
 import { useSelector } from 'react-redux';
+import { createSelector } from '@reduxjs/toolkit';
 
-export default function Bloglist({ onRemoveBlogBy }) {
-	const [sortBy, setSortBy] = useState('desc');
-	const blogs = useSelector((state) => {
-		const copyBlogs = [...state.blogs];
+const selectBlogsBySortBy = createSelector(
+	(state) => state.blogs,
+	(_, sortBy) => sortBy,
+	(blogs, sortBy) => {
+		const copyBlogs = [...blogs];
 		return sortBy === 'asc'
 			? copyBlogs.sort((a, b) => a.likes - b.likes)
 			: copyBlogs.sort((a, b) => b.likes - a.likes);
-	});
+	}
+);
 
-	const userFromLocalStorage = useState(() =>
-		JSON.parse(window.localStorage.getItem(LS_BLOGLIST_USER))
-	);
+export default function Bloglist() {
+	const [sortBy, setSortBy] = useState('desc');
+	const user = useSelector((state) => state.user);
+	const blogs = useSelector((state) => selectBlogsBySortBy(state, sortBy));
 
 	const sortByLikes = () => {
 		switch (sortBy) {
@@ -43,12 +46,7 @@ export default function Bloglist({ onRemoveBlogBy }) {
 			</button>
 			<ul className='bloglist'>
 				{blogs.map((blog) => (
-					<Blog
-						key={blog.id}
-						blog={blog}
-						onRemoveBlogBy={onRemoveBlogBy}
-						user={userFromLocalStorage[0]}
-					/>
+					<Blog key={blog.id} blog={blog} user={user} />
 				))}
 			</ul>
 		</>

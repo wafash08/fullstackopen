@@ -40,7 +40,6 @@ export function createBlog(blog) {
 			user: {
 				username: blog.user.username,
 				name: blog.user.name,
-				id: blog.user.id,
 			},
 		};
 		dispatch(addBlog(newBlogWithUser));
@@ -55,7 +54,6 @@ export function addLikeToBlog(id, blog) {
 			user: {
 				username: blog.user.username,
 				name: blog.user.name,
-				id: blog.user.id,
 			},
 		};
 		dispatch(addLike(blogWithUser));

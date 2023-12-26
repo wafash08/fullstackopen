@@ -1,22 +1,18 @@
 import { useState, useEffect, useRef } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Notification from './components/notification';
 import LoginForm from './components/login-form';
 import Togglable from './components/togglable';
 import CreateNewBlogForm from './components/create-new-blog-form';
 import Bloglist from './components/bloglist';
-import { remove, setToken } from './services/blogs';
-import { login } from './services/auth';
+import { setToken } from './services/blogs';
+import { LS_BLOGLIST_USER, logout } from './services/auth';
 import { setNotification } from './reducers/notificationReducer';
-import {
-	addLikeToBlog,
-	createBlog,
-	initializeBlog,
-} from './reducers/blogReducer';
+import { createBlog, initializeBlog } from './reducers/blogReducer';
+import { clearUser, loginOf, setUser } from './reducers/userReducer';
 
-export const LS_BLOGLIST_USER = 'loggedBloglistUser';
 export default function App() {
-	const [user, setUser] = useState(null);
+	const user = useSelector((state) => state.user);
 	const newBlogFormRef = useRef(null);
 	const dispatch = useDispatch();
 
@@ -27,21 +23,16 @@ export default function App() {
 	useEffect(() => {
 		const loggedInUser = window.localStorage.getItem(LS_BLOGLIST_USER);
 		if (loggedInUser) {
-			const user = JSON.parse(loggedInUser);
-			setUser(user);
-			setToken(user.token);
+			const userFromLS = JSON.parse(loggedInUser);
+			console.log('userFromLS >> ', userFromLS);
+			dispatch(setUser(userFromLS));
+			setToken(userFromLS.token);
 		}
 	}, []);
 
 	const handleLogin = async ({ username, password }) => {
 		try {
-			const loggedInUser = await login({ username, password });
-			setUser(loggedInUser);
-			window.localStorage.setItem(
-				LS_BLOGLIST_USER,
-				JSON.stringify(loggedInUser)
-			);
-			setToken(loggedInUser.token);
+			dispatch(loginOf({ username, password }));
 		} catch (error) {
 			console.log(error);
 			dispatch(
@@ -54,8 +45,8 @@ export default function App() {
 	};
 
 	const handleLogout = () => {
-		setUser(null);
-		window.localStorage.removeItem(LS_BLOGLIST_USER);
+		dispatch(clearUser());
+		logout();
 	};
 
 	const createNewBlog = async (blog) => {
