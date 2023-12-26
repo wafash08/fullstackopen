@@ -2,7 +2,6 @@ import { useNotification } from '../notification-context';
 
 export default function Notification() {
 	const notification = useNotification();
-	console.log('notification >> ', notification);
 	const { message, type } = notification;
 	const baseStyles = {
 		fontSize: '20px',

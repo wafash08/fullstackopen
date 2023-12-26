@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useQuery } from 'react-query';
 import Notification from './components/notification';
 import LoginForm from './components/login-form';
 import Togglable from './components/togglable';
@@ -10,18 +11,10 @@ import { useNotify } from './notification-context';
 
 export const LS_BLOGLIST_USER = 'loggedBloglistUser';
 export default function App() {
+	const { data: blogs, error, isLoading, isError } = useQuery('blogs', getAll);
 	const [user, setUser] = useState(null);
-	const [blogs, setBlogs] = useState([]);
 	const newBlogFormRef = useRef(null);
 	const notify = useNotify();
-
-	useEffect(() => {
-		async function getAllBlogs() {
-			const blogs = await getAll();
-			setBlogs(blogs);
-		}
-		getAllBlogs();
-	}, []);
 
 	useEffect(() => {
 		const loggedInUser = window.localStorage.getItem(LS_BLOGLIST_USER);
@@ -50,31 +43,6 @@ export default function App() {
 	const handleLogout = () => {
 		setUser(null);
 		window.localStorage.removeItem(LS_BLOGLIST_USER);
-	};
-
-	const createNewBlog = async (blog) => {
-		try {
-			newBlogFormRef.current.toggleVisibility();
-			const newBlog = await create(blog);
-			const newBlogWithUser = {
-				...newBlog,
-				user: {
-					name: user.name,
-					username: user.username,
-				},
-			};
-			setBlogs([...blogs, newBlogWithUser]);
-			notify({
-				message: `a new blog ${newBlog.title} by ${newBlog.author} added`,
-				type: 'success',
-			});
-		} catch (error) {
-			console.log(error);
-			notify({
-				message: error.response.data.error,
-				type: 'error',
-			});
-		}
 	};
 
 	const updateLikesTo = async (id, updatedBlog) => {
@@ -111,6 +79,14 @@ export default function App() {
 		}
 	};
 
+	if (isLoading) {
+		return <p>Loading...</p>;
+	}
+
+	if (isError) {
+		return <p>Error: {error.message}</p>;
+	}
+
 	return (
 		<div>
 			{user === null ? <h2>Log in to application</h2> : <h2>blogs</h2>}
@@ -130,7 +106,7 @@ export default function App() {
 						</button>
 					</p>
 					<Togglable buttonLable={'create new blog'} ref={newBlogFormRef}>
-						<CreateNewBlogForm onCreateNewBlog={createNewBlog} />
+						<CreateNewBlogForm />
 					</Togglable>
 					<Bloglist
 						blogs={blogs}

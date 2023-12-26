@@ -14,6 +14,7 @@ export function setToken(newToken) {
 }
 
 export async function create(newBlog) {
+	console.log('newBlog >> ', newBlog);
 	const request = await axios.post(baseUrl, newBlog, {
 		headers: { Authorization: token },
 	});

@@ -1,6 +1,5 @@
 import { createContext, useContext, useReducer } from 'react';
 
-// 1. bikin reducer
 function reducer(state = null, action) {
 	switch (action.type) {
 		case 'SET': {
@@ -15,10 +14,10 @@ function reducer(state = null, action) {
 	}
 }
 const initialValue = { message: null, type: null };
-// 2. bikin context
+
 export const NotificationContext = createContext(initialValue);
 NotificationContext.displayName = 'Notification Context';
-// 3. bikin context provider
+
 export function NotificationContextProvider({ children }) {
 	const [notification, dispatch] = useReducer(reducer, initialValue);
 	return (
@@ -27,7 +26,7 @@ export function NotificationContextProvider({ children }) {
 		</NotificationContext.Provider>
 	);
 }
-// 4. bikin hooks untuk mendapatkan value notification
+
 export function useNotification() {
 	const context = useContext(NotificationContext);
 	if (!context) {
@@ -37,7 +36,7 @@ export function useNotification() {
 	}
 	return context[0];
 }
-// 5. bikin hooks untuk memodifikasi value notification
+
 export function useNotify() {
 	const context = useContext(NotificationContext);
 	if (!context) {
