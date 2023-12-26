@@ -2,13 +2,20 @@ import { useMutation, useQueryClient } from 'react-query';
 import { create as createBlog } from '../services/blogs';
 import { useNotify } from '../notification-context';
 
-export default function CreateNewBlogForm() {
+export default function CreateNewBlogForm({ user }) {
 	const queryClient = useQueryClient();
 	const notify = useNotify();
 	const createBlogMutation = useMutation(createBlog, {
 		onSuccess: (newBlog) => {
 			const blogs = queryClient.getQueryData('blogs');
-			queryClient.setQueryData('blogs', blogs.concat(newBlog));
+			const newBlogWithUser = {
+				...newBlog,
+				user: {
+					username: user.username,
+					name: user.name,
+				},
+			};
+			queryClient.setQueryData('blogs', blogs.concat(newBlogWithUser));
 			notify({
 				message: `a new blog ${newBlog.title} by ${newBlog.author} added`,
 				type: 'success',

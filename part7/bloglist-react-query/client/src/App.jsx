@@ -11,7 +11,16 @@ import { useNotify } from './notification-context';
 
 export const LS_BLOGLIST_USER = 'loggedBloglistUser';
 export default function App() {
-	const { data: blogs, error, isLoading, isError } = useQuery('blogs', getAll);
+	const {
+		data: blogs,
+		error,
+		isLoading,
+		isError,
+	} = useQuery({
+		queryKey: 'blogs',
+		queryFn: getAll,
+		retry: 1,
+	});
 	const [user, setUser] = useState(null);
 	const newBlogFormRef = useRef(null);
 	const notify = useNotify();
@@ -45,40 +54,6 @@ export default function App() {
 		window.localStorage.removeItem(LS_BLOGLIST_USER);
 	};
 
-	const updateLikesTo = async (id, updatedBlog) => {
-		try {
-			const result = await addLikeTo(id, updatedBlog);
-			const blogsAfterUpdateLikes = blogs.map((b) => {
-				return b.id === result.id ? { ...b, result } : b;
-			});
-			setBlogs(blogsAfterUpdateLikes);
-		} catch (error) {
-			console.error(error);
-			notify({
-				message: error.response.data.error,
-				type: 'error',
-			});
-		}
-	};
-
-	const removeBlogBy = async (id) => {
-		try {
-			const blogToRemove = blogs.find((b) => b.id === id);
-			if (!blogToRemove) {
-				return;
-			}
-			await remove(id);
-			setBlogs(blogs.filter((b) => b.id !== id));
-		} catch (error) {
-			notify({
-				message:
-					'blog you are trying to remove has already removed from the server',
-				type: 'error',
-			});
-			setBlogs(blogs.filter((b) => b.id !== id));
-		}
-	};
-
 	if (isLoading) {
 		return <p>Loading...</p>;
 	}
@@ -106,13 +81,9 @@ export default function App() {
 						</button>
 					</p>
 					<Togglable buttonLable={'create new blog'} ref={newBlogFormRef}>
-						<CreateNewBlogForm />
+						<CreateNewBlogForm user={user} />
 					</Togglable>
-					<Bloglist
-						blogs={blogs}
-						onRemoveBlogBy={removeBlogBy}
-						onUpdateLikesTo={updateLikesTo}
-					/>
+					<Bloglist blogs={blogs} />
 				</>
 			)}
 		</div>

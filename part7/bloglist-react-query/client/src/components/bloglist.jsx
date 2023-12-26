@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import Blog from './Blog';
 import { LS_BLOGLIST_USER } from '../App';
 
-export default function Bloglist({ blogs, onRemoveBlogBy, onUpdateLikesTo }) {
+export default function Bloglist({ blogs }) {
 	const [sortBy, setSortBy] = useState('desc');
 	const userFromLocalStorage = useState(() =>
 		JSON.parse(window.localStorage.getItem(LS_BLOGLIST_USER)),
@@ -41,13 +41,7 @@ export default function Bloglist({ blogs, onRemoveBlogBy, onUpdateLikesTo }) {
 			</button>
 			<ul className='bloglist'>
 				{sortedBlogs.map((blog) => (
-					<Blog
-						key={blog.id}
-						blog={blog}
-						onRemoveBlogBy={onRemoveBlogBy}
-						onUpdateLikesTo={onUpdateLikesTo}
-						user={userFromLocalStorage[0]}
-					/>
+					<Blog key={blog.id} blog={blog} user={userFromLocalStorage[0]} />
 				))}
 			</ul>
 		</>
@@ -56,6 +50,4 @@ export default function Bloglist({ blogs, onRemoveBlogBy, onUpdateLikesTo }) {
 
 Bloglist.propTypes = {
 	blogs: PropTypes.array.isRequired,
-	onRemoveBlogBy: PropTypes.func.isRequired,
-	onUpdateLikesTo: PropTypes.func.isRequired,
 };

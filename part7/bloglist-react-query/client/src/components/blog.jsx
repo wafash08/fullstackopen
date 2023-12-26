@@ -1,8 +1,38 @@
 import { useState } from 'react';
+import { useMutation, useQueryClient } from 'react-query';
+import { addLikeTo, remove } from '../services/blogs';
+import { useNotify } from '../notification-context';
 
-export default function Blog({ blog, onRemoveBlogBy, onUpdateLikesTo, user }) {
+export default function Blog({ blog, user }) {
+	const queryClient = useQueryClient();
+	const notify = useNotify();
+	const onLikeMutation = useMutation(addLikeTo, {
+		onSuccess: (data) => {
+			const blogs = queryClient.getQueryData('blogs');
+			const blogsAfterLike = blogs.map((blog) => {
+				return blog.id === data.id
+					? {
+							...data,
+							user: {
+								username: blog.user.username,
+								name: blog.user.name,
+								id: blog.user.id,
+							},
+						}
+					: blog;
+			});
+			queryClient.setQueryData('blogs', blogsAfterLike);
+			notify({ message: `You liked ${data.title}!`, type: 'success' });
+		},
+	});
+	const onRemoveMutation = useMutation(remove, {
+		onSuccess: () => {
+			const blogs = queryClient.getQueryData('blogs');
+			const blogsAfterRemove = blogs.filter((b) => b.id !== blog.id);
+			queryClient.setQueryData('blogs', blogsAfterRemove);
+		},
+	});
 	const [showDetails, setShowDetails] = useState(false);
-	const [like, setLike] = useState(blog.likes);
 
 	const showDeleteButton = blog.user.username === user.username;
 
@@ -15,23 +45,22 @@ export default function Blog({ blog, onRemoveBlogBy, onUpdateLikesTo, user }) {
 		marginBottom: 5,
 	};
 
-	const handleLike = async () => {
-		setLike(like + 1);
-		const updatedBlog = {
+	const handleLike = async (blog) => {
+		const blogToLike = {
 			...blog,
-			likes: like + 1,
+			likes: blog.likes + 1,
 		};
-		onUpdateLikesTo(blog.id, updatedBlog);
+		onLikeMutation.mutate(blogToLike);
 	};
 
-	const handleRemoveBlogBy = async () => {
+	const handleRemoveBlogBy = async (id) => {
 		const hasConfirmation = window.confirm(
 			`Remove blog ${blog.title} by ${blog.author}?`,
 		);
 		if (!hasConfirmation) {
 			return;
 		}
-		onRemoveBlogBy(blog.id);
+		onRemoveMutation.mutate(id);
 	};
 
 	return (
@@ -50,8 +79,12 @@ export default function Blog({ blog, onRemoveBlogBy, onUpdateLikesTo, user }) {
 				<div>
 					<p>{blog.url}</p>
 					<p>
-						<span>{like}</span>
-						<button type='button' onClick={handleLike} data-test='like_button'>
+						<span>{blog.likes}</span>
+						<button
+							type='button'
+							onClick={() => handleLike(blog)}
+							data-test='like_button'
+						>
 							like
 						</button>
 					</p>
@@ -59,7 +92,7 @@ export default function Blog({ blog, onRemoveBlogBy, onUpdateLikesTo, user }) {
 					{showDeleteButton ? (
 						<button
 							type='button'
-							onClick={handleRemoveBlogBy}
+							onClick={() => handleRemoveBlogBy(blog.id)}
 							data-test='remove_button'
 						>
 							remove

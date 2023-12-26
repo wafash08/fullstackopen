@@ -14,7 +14,6 @@ export function setToken(newToken) {
 }
 
 export async function create(newBlog) {
-	console.log('newBlog >> ', newBlog);
 	const request = await axios.post(baseUrl, newBlog, {
 		headers: { Authorization: token },
 	});
@@ -22,8 +21,8 @@ export async function create(newBlog) {
 	return response.data;
 }
 
-export async function addLikeTo(id, blog) {
-	const request = await axios.put(`${baseUrl}/${id}`, blog);
+export async function addLikeTo(blog) {
+	const request = await axios.put(`${baseUrl}/${blog.id}`, blog);
 	const response = await request.data;
 	return response.data;
 }
