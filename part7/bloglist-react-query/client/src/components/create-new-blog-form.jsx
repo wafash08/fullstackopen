@@ -1,8 +1,10 @@
 import { useMutation, useQueryClient } from 'react-query';
 import { create as createBlog } from '../services/blogs';
-import { useNotify } from '../notification-context';
+import { useNotify } from '../contexts/notification-context';
+import { useUser } from '../contexts/user-context';
 
-export default function CreateNewBlogForm({ user }) {
+export default function CreateNewBlogForm() {
+	const user = useUser();
 	const queryClient = useQueryClient();
 	const notify = useNotify();
 	const createBlogMutation = useMutation(createBlog, {

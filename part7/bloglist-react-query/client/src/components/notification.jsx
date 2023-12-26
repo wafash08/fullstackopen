@@ -1,4 +1,4 @@
-import { useNotification } from '../notification-context';
+import { useNotification } from '../contexts/notification-context';
 
 export default function Notification() {
 	const notification = useNotification();

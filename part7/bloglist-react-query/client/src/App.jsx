@@ -1,13 +1,14 @@
-import { useState, useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { useQuery } from 'react-query';
 import Notification from './components/notification';
 import LoginForm from './components/login-form';
 import Togglable from './components/togglable';
 import CreateNewBlogForm from './components/create-new-blog-form';
 import Bloglist from './components/bloglist';
-import { addLikeTo, create, getAll, remove, setToken } from './services/blogs';
+import { getAll, setToken } from './services/blogs';
 import { login } from './services/auth';
-import { useNotify } from './notification-context';
+import { useNotify } from './contexts/notification-context';
+import { useSetUser, useUser } from './contexts/user-context';
 
 export const LS_BLOGLIST_USER = 'loggedBloglistUser';
 export default function App() {
@@ -21,28 +22,15 @@ export default function App() {
 		queryFn: getAll,
 		retry: 1,
 	});
-	const [user, setUser] = useState(null);
+	const user = useUser();
+	const dispatchUser = useSetUser();
 	const newBlogFormRef = useRef(null);
 	const notify = useNotify();
-
-	useEffect(() => {
-		const loggedInUser = window.localStorage.getItem(LS_BLOGLIST_USER);
-		if (loggedInUser) {
-			const user = JSON.parse(loggedInUser);
-			setUser(user);
-			setToken(user.token);
-		}
-	}, []);
 
 	const handleLogin = async ({ username, password }) => {
 		try {
 			const loggedInUser = await login({ username, password });
-			setUser(loggedInUser);
-			window.localStorage.setItem(
-				LS_BLOGLIST_USER,
-				JSON.stringify(loggedInUser),
-			);
-			setToken(loggedInUser.token);
+			dispatchUser({ type: 'SET', payload: loggedInUser });
 		} catch (error) {
 			console.log(error);
 			notify({ message: error.response.data.error, type: 'error' });
@@ -50,8 +38,7 @@ export default function App() {
 	};
 
 	const handleLogout = () => {
-		setUser(null);
-		window.localStorage.removeItem(LS_BLOGLIST_USER);
+		dispatchUser({ type: 'CLEAR' });
 	};
 
 	if (isLoading) {
@@ -81,7 +68,7 @@ export default function App() {
 						</button>
 					</p>
 					<Togglable buttonLable={'create new blog'} ref={newBlogFormRef}>
-						<CreateNewBlogForm user={user} />
+						<CreateNewBlogForm />
 					</Togglable>
 					<Bloglist blogs={blogs} />
 				</>

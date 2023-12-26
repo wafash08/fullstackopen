@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { addLikeTo, remove } from '../services/blogs';
-import { useNotify } from '../notification-context';
+import { useNotify } from '../contexts/notification-context';
 
 export default function Blog({ blog, user }) {
 	const queryClient = useQueryClient();
