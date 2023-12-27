@@ -18,7 +18,7 @@ const initialValue = { message: null, type: null };
 export const NotificationContext = createContext(initialValue);
 NotificationContext.displayName = 'Notification Context';
 
-export function NotificationContextProvider({ children }) {
+export default function NotificationContextProvider({ children }) {
 	const [notification, dispatch] = useReducer(reducer, initialValue);
 	return (
 		<NotificationContext.Provider value={[notification, dispatch]}>

@@ -9,6 +9,7 @@ import { getAll, setToken } from './services/blogs';
 import { login } from './services/auth';
 import { useNotify } from './contexts/notification-context';
 import { useSetUser, useUser } from './contexts/user-context';
+import { Outlet } from 'react-router-dom';
 
 export const LS_BLOGLIST_USER = 'loggedBloglistUser';
 export default function App() {
@@ -71,6 +72,7 @@ export default function App() {
 						<CreateNewBlogForm />
 					</Togglable>
 					<Bloglist blogs={blogs} />
+					<Outlet />
 				</>
 			)}
 		</div>

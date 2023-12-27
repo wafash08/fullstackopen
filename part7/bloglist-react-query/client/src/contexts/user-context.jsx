@@ -5,7 +5,6 @@ import { LS_BLOGLIST_USER } from '../App';
 function reducer(state = null, action) {
 	switch (action.type) {
 		case 'SET': {
-			console.log('action.payload >> ', action.payload);
 			window.localStorage.setItem(
 				LS_BLOGLIST_USER,
 				JSON.stringify(action.payload),
@@ -26,7 +25,7 @@ function reducer(state = null, action) {
 const UserContext = createContext(null);
 UserContext.displayName = 'User Context';
 
-export function UserContextProvider({ children }) {
+export default function UserContextProvider({ children }) {
 	const [user, dispatch] = useReducer(reducer, null);
 	useEffect(() => {
 		const loggedInUser = window.localStorage.getItem(LS_BLOGLIST_USER);
