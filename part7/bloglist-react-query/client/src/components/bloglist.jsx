@@ -1,9 +1,9 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
 import { useState } from 'react';
 import { useQuery } from 'react-query';
-import Blog from './Blog';
 import { LS_BLOGLIST_USER } from '../App';
 import { getAll } from '../services/blogs';
+import { Link } from 'react-router-dom';
 
 export default function Bloglist() {
 	const {
@@ -17,9 +17,6 @@ export default function Bloglist() {
 		retry: 1,
 	});
 	const [sortBy, setSortBy] = useState('desc');
-	const userFromLocalStorage = useState(() =>
-		JSON.parse(window.localStorage.getItem(LS_BLOGLIST_USER)),
-	);
 
 	if (isLoading) {
 		return <p>Loading...</p>;
@@ -48,6 +45,15 @@ export default function Bloglist() {
 		}
 	};
 
+	const styles = {
+		paddingTop: 10,
+		paddingBottom: 10,
+		paddingLeft: 10,
+		border: 'solid',
+		borderWidth: 1,
+		marginBottom: 5,
+	};
+
 	return (
 		<>
 			<button
@@ -58,9 +64,11 @@ export default function Bloglist() {
 				sort by likes "{sortBy}" (
 				{sortBy === 'asc' ? 'least to most' : 'most to least'})
 			</button>
-			<ul className='bloglist'>
+			<ul className='bloglist' style={{ listStyle: 'none' }}>
 				{sortedBlogs.map((blog) => (
-					<Blog key={blog.id} blog={blog} user={userFromLocalStorage[0]} />
+					<li key={blog.id} style={styles}>
+						<Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+					</li>
 				))}
 			</ul>
 		</>

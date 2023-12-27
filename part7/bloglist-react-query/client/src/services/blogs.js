@@ -2,9 +2,13 @@ import axios from 'axios';
 const baseUrl = '/api/blogs';
 
 export async function getAll() {
-	const request = await axios.get(baseUrl);
-	const response = await request.data;
-	return response.data;
+	const response = await axios.get(baseUrl);
+	return response.data.data;
+}
+
+export async function getBlogByID(id) {
+	const response = await axios.get(`${baseUrl}/${id}`);
+	return response.data.data;
 }
 
 let token = null;

@@ -8,6 +8,7 @@ import UserContextProvider from './contexts/user-context';
 import Users from './routes/users';
 import User from './routes/user';
 import Bloglist from './components/bloglist';
+import Blog from './routes/blog';
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
 			{
 				path: '/users/:id',
 				element: <User />,
+			},
+			{
+				path: '/blogs/:id',
+				element: <Blog />,
 			},
 		],
 	},
