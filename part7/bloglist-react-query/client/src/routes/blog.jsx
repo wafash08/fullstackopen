@@ -1,8 +1,9 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { addLikeTo, getBlogByID, remove } from '../services/blogs';
+import { addComment, addLikeTo, getBlogByID, remove } from '../services/blogs';
 import { useNotify } from '../contexts/notification-context';
 import { useUser } from '../contexts/user-context';
+import Comments from '../components/comments';
 
 export default function Blog() {
 	const user = useUser();
@@ -15,12 +16,14 @@ export default function Blog() {
 	});
 	const queryClient = useQueryClient();
 	const notify = useNotify();
+
 	const onLikeMutation = useMutation(addLikeTo, {
 		onSuccess: (data) => {
 			queryClient.invalidateQueries('user');
 			notify({ message: `You liked ${data.title}!`, type: 'success' });
 		},
 	});
+
 	const onRemoveMutation = useMutation(remove, {
 		onSuccess: () => {
 			const blogs = queryClient.getQueryData('blogs');
@@ -30,7 +33,13 @@ export default function Blog() {
 		},
 	});
 
-	const handleLike = async (blog) => {
+	const onCommentMutation = useMutation(addComment, {
+		onSuccess: (data) => {
+			blog.comments = blog.comments.concat(data);
+		},
+	});
+
+	const handleLike = (blog) => {
 		const blogToLike = {
 			...blog,
 			likes: blog.likes + 1,
@@ -38,7 +47,7 @@ export default function Blog() {
 		onLikeMutation.mutate(blogToLike);
 	};
 
-	const handleRemoveBlogBy = async (id) => {
+	const handleRemoveBlogBy = (id) => {
 		const hasConfirmation = window.confirm(
 			`Remove blog ${blog.title} by ${blog.author}?`,
 		);
@@ -46,6 +55,10 @@ export default function Blog() {
 			return;
 		}
 		onRemoveMutation.mutate(id);
+	};
+
+	const handleAddComment = (blogID, comment) => {
+		onCommentMutation.mutate({ blogID, comment });
 	};
 
 	if (isLoading) {
@@ -87,6 +100,7 @@ export default function Blog() {
 						remove
 					</button>
 				) : null}
+				<Comments blog={blog} onAddComment={handleAddComment} />
 			</div>
 		</div>
 	);
