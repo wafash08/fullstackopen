@@ -1,14 +1,33 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
 import { useState } from 'react';
-import PropTypes from 'prop-types';
+import { useQuery } from 'react-query';
 import Blog from './Blog';
 import { LS_BLOGLIST_USER } from '../App';
+import { getAll } from '../services/blogs';
 
-export default function Bloglist({ blogs }) {
+export default function Bloglist() {
+	const {
+		data: blogs,
+		error,
+		isLoading,
+		isError,
+	} = useQuery({
+		queryKey: 'blogs',
+		queryFn: getAll,
+		retry: 1,
+	});
 	const [sortBy, setSortBy] = useState('desc');
 	const userFromLocalStorage = useState(() =>
 		JSON.parse(window.localStorage.getItem(LS_BLOGLIST_USER)),
 	);
+
+	if (isLoading) {
+		return <p>Loading...</p>;
+	}
+
+	if (isError) {
+		return <p>Error: {error.message}</p>;
+	}
 
 	let sortedBlogs =
 		sortBy === 'asc'
@@ -47,7 +66,3 @@ export default function Bloglist({ blogs }) {
 		</>
 	);
 }
-
-Bloglist.propTypes = {
-	blogs: PropTypes.array.isRequired,
-};

@@ -6,3 +6,8 @@ export async function fetchAllUsers() {
 	const response = await axios.get(baseUrl);
 	return response.data.data;
 }
+
+export async function fetchUserByID(id) {
+	const response = await axios.get(`${baseUrl}/${id}`);
+	return response.data.data;
+}

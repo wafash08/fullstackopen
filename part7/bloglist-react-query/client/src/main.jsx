@@ -6,6 +6,8 @@ import './index.css';
 import NotificationContextProvider from './contexts/notification-context';
 import UserContextProvider from './contexts/user-context';
 import Users from './routes/users';
+import User from './routes/user';
+import Bloglist from './components/bloglist';
 
 const queryClient = new QueryClient();
 
@@ -15,8 +17,16 @@ const router = createBrowserRouter([
 		element: <App />,
 		children: [
 			{
+				index: true,
+				element: <Bloglist />,
+			},
+			{
 				path: '/users',
 				element: <Users />,
+			},
+			{
+				path: '/users/:id',
+				element: <User />,
 			},
 		],
 	},

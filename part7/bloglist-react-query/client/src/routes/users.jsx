@@ -1,8 +1,13 @@
 import { useQuery } from 'react-query';
 import { fetchAllUsers } from '../services/users';
+import { Link } from 'react-router-dom';
 
 export default function Users() {
-	const { data: users } = useQuery('users', fetchAllUsers);
+	const { data: users, isLoading } = useQuery('users', fetchAllUsers);
+
+	if (isLoading) {
+		return <p>Loading...</p>;
+	}
 
 	const sortedUsers = users.sort((a, b) => b.blogs.length - a.blogs.length);
 
@@ -22,7 +27,9 @@ export default function Users() {
 					{sortedUsers.map(({ id, name, blogs }) => {
 						return (
 							<tr key={id}>
-								<td style={{ paddingRight: '10px' }}>{name}</td>
+								<td style={{ paddingRight: '10px' }}>
+									<Link to={`/users/${id}`}>{name}</Link>
+								</td>
 								<td>{blogs.length}</td>
 							</tr>
 						);
