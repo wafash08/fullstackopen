@@ -7,6 +7,11 @@ export async function getAll() {
 	return response.data;
 }
 
+export async function getBlogByID(id) {
+	const response = await axios.get(`${baseUrl}/${id}`);
+	return response.data.data;
+}
+
 let token = null;
 
 export function setToken(newToken) {

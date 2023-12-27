@@ -1,8 +1,8 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
 import { useState } from 'react';
-import Blog from './blog';
 import { useSelector } from 'react-redux';
 import { createSelector } from '@reduxjs/toolkit';
+import { Link } from 'react-router-dom';
 
 const selectBlogsBySortBy = createSelector(
 	(state) => state.blogs,
@@ -17,7 +17,7 @@ const selectBlogsBySortBy = createSelector(
 
 export default function Bloglist() {
 	const [sortBy, setSortBy] = useState('desc');
-	const user = useSelector((state) => state.user);
+
 	const blogs = useSelector((state) => selectBlogsBySortBy(state, sortBy));
 
 	const sortByLikes = () => {
@@ -34,6 +34,15 @@ export default function Bloglist() {
 		}
 	};
 
+	const styles = {
+		paddingTop: 10,
+		paddingBottom: 10,
+		paddingLeft: 10,
+		border: 'solid',
+		borderWidth: 1,
+		marginBottom: 5,
+	};
+
 	return (
 		<>
 			<button
@@ -46,7 +55,9 @@ export default function Bloglist() {
 			</button>
 			<ul className='bloglist'>
 				{blogs.map((blog) => (
-					<Blog key={blog.id} blog={blog} user={user} />
+					<li key={blog.id} style={styles}>
+						<Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+					</li>
 				))}
 			</ul>
 		</>

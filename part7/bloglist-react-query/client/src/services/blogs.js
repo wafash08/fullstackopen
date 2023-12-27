@@ -40,8 +40,6 @@ export async function remove(id) {
 }
 
 export async function addComment({ blogID, comment }) {
-	console.log('blogID >> ', blogID);
-	console.log('comment >> ', comment);
 	const response = await axios.post(`${baseUrl}/${blogID}/comments`, comment);
 	return response.data.data;
 }
