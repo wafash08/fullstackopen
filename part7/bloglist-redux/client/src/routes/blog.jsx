@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addLikeToBlog, removeBlogByID } from '../reducers/blogReducer';
 import { useParams } from 'react-router-dom';
-import { getBlogByID } from '../services/blogs';
+import { addComment, getBlogByID } from '../services/blogs';
+import Comments from '../components/comments';
 
 export default function Blog() {
 	const [blog, setBlog] = useState(null);
@@ -56,6 +57,11 @@ export default function Blog() {
 		}
 	};
 
+	const handleAddComment = async (blogID, comment) => {
+		const response = await addComment({ blogID, comment });
+		setBlog({ ...blog, comments: [...blog.comments, response] });
+	};
+
 	if (!blog) {
 		return <p>loading...</p>;
 	}
@@ -97,6 +103,7 @@ export default function Blog() {
 						remove
 					</button>
 				) : null}
+				<Comments blog={blog} onAddComment={handleAddComment} />
 			</div>
 		</div>
 	);
