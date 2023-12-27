@@ -19,3 +19,8 @@ export async function getAllUsers() {
 	const response = await axios.get(usersUrl);
 	return response.data.data;
 }
+
+export async function getUserByID(id) {
+	const response = await axios.get(`${usersUrl}/${id}`);
+	return response.data.data;
+}
