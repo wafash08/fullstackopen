@@ -4,12 +4,12 @@ import Notification from './components/notification';
 import LoginForm from './components/login-form';
 import Togglable from './components/togglable';
 import CreateNewBlogForm from './components/create-new-blog-form';
-import Bloglist from './components/bloglist';
 import { setToken } from './services/blogs';
 import { LS_BLOGLIST_USER, logout } from './services/auth';
 import { setNotification } from './reducers/notificationReducer';
 import { createBlog, initializeBlog } from './reducers/blogReducer';
 import { clearUser, loginOf, setUser } from './reducers/userReducer';
+import { Outlet } from 'react-router-dom';
 
 export default function App() {
 	const user = useSelector((state) => state.user);
@@ -24,7 +24,6 @@ export default function App() {
 		const loggedInUser = window.localStorage.getItem(LS_BLOGLIST_USER);
 		if (loggedInUser) {
 			const userFromLS = JSON.parse(loggedInUser);
-			console.log('userFromLS >> ', userFromLS);
 			dispatch(setUser(userFromLS));
 			setToken(userFromLS.token);
 		}
@@ -98,7 +97,7 @@ export default function App() {
 					<Togglable buttonLable={'create new blog'} ref={newBlogFormRef}>
 						<CreateNewBlogForm onCreateNewBlog={createNewBlog} />
 					</Togglable>
-					<Bloglist />
+					<Outlet />
 				</>
 			)}
 		</div>

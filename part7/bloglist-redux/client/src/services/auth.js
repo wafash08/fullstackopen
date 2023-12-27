@@ -1,5 +1,6 @@
 import axios from 'axios';
 const loginUrl = '/api/login';
+const usersUrl = '/api/users';
 
 export const LS_BLOGLIST_USER = 'loggedBloglistUser';
 
@@ -12,4 +13,9 @@ export async function login({ username, password }) {
 
 export function logout() {
 	window.localStorage.removeItem(LS_BLOGLIST_USER);
+}
+
+export async function getAllUsers() {
+	const response = await axios.get(usersUrl);
+	return response.data.data;
 }
