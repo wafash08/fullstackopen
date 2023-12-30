@@ -1,66 +1,36 @@
-import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addLikeToBlog, removeBlogByID } from '../reducers/blogReducer';
-import { useParams } from 'react-router-dom';
-import { addComment, getBlogByID } from '../services/blogs';
+import { useNavigate, useParams } from 'react-router-dom';
+import { addComment } from '../services/blogs';
 import Comments from '../components/comments';
 
 export default function Blog() {
-	const [blog, setBlog] = useState(null);
-	const user = useSelector((state) => state.user);
+	const blogs = useSelector((state) => state.blogs);
+	const user = useSelector((state) => state.auth);
 	const dispatch = useDispatch();
 	const { id } = useParams();
+	const navigate = useNavigate();
 
-	useEffect(() => {
-		async function getBlog() {
-			const response = await getBlogByID(id);
-			setBlog(response);
-		}
-		getBlog();
-	}, [id]);
-
-	const handleLike = async (id, blogToLike) => {
-		try {
-			const updatedBlog = {
-				...blogToLike,
-				likes: blogToLike.likes + 1,
-			};
-			dispatch(addLikeToBlog(id, updatedBlog));
-		} catch (error) {
-			console.error(error);
-			dispatch(
-				setNotification({
-					message: error.response.data.error,
-					type: 'error',
-				})
-			);
-		}
+	const handleLike = (id, blogToLike) => {
+		const updatedBlog = {
+			...blogToLike,
+			likes: blogToLike.likes + 1,
+		};
+		dispatch(addLikeToBlog(id, updatedBlog));
 	};
 
 	const handleRemoveBlogByID = async (id) => {
-		try {
-			const hasConfirmation = window.confirm(
-				`Remove blog ${blog.title} by ${blog.author}?`
-			);
-			if (!hasConfirmation) {
-				return;
-			}
-			dispatch(removeBlogByID(id));
-		} catch (error) {
-			console.error(error);
-			dispatch(
-				setNotification({
-					message: error.response.data.error,
-					type: 'error',
-				})
-			);
+		const hasConfirmation = window.confirm(
+			`Remove blog ${blog.title} by ${blog.author}?`
+		);
+		if (!hasConfirmation) {
+			return;
 		}
+		navigate('/');
+		dispatch(removeBlogByID(id));
 	};
 
-	const handleAddComment = async (blogID, comment) => {
-		const response = await addComment({ blogID, comment });
-		setBlog({ ...blog, comments: [...blog.comments, response] });
-	};
+	const blog = blogs.find((b) => b.id === id);
 
 	if (!blog) {
 		return <p>loading...</p>;
@@ -103,7 +73,7 @@ export default function Blog() {
 						remove
 					</button>
 				) : null}
-				<Comments blog={blog} onAddComment={handleAddComment} />
+				<Comments blog={blog} />
 			</div>
 		</div>
 	);

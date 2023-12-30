@@ -40,7 +40,7 @@ export async function remove(id) {
 	return response.data;
 }
 
-export async function addComment({ blogID, comment }) {
-	const response = await axios.post(`${baseUrl}/${blogID}/comments`, comment);
+export async function addComment({ id, comment }) {
+	const response = await axios.post(`${baseUrl}/${id}/comments`, comment);
 	return response.data.data;
 }

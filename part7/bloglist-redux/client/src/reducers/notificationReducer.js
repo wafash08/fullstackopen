@@ -18,12 +18,6 @@ const notificationSlice = createSlice({
 
 export const { clear, set } = notificationSlice.actions;
 
-/**
- *
- * @param {string} message Notification message
- * @param {number} timeout How long the notification appears
- * @returns
- */
 export function setNotification({ message, type, timeout = 5 }) {
 	return async function (dispatch) {
 		dispatch(set({ message, type }));

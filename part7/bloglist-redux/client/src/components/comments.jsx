@@ -1,3 +1,6 @@
+import { useDispatch } from 'react-redux';
+import { createComment } from '../reducers/blogReducer';
+
 function Comment({ comment }) {
 	return (
 		<li>
@@ -6,7 +9,8 @@ function Comment({ comment }) {
 	);
 }
 
-export default function Comments({ onAddComment, blog }) {
+export default function Comments({ blog }) {
+	const dispatch = useDispatch();
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		const commentFormData = new FormData(e.target);
@@ -15,10 +19,11 @@ export default function Comments({ onAddComment, blog }) {
 			comment[key] = value;
 		}
 		console.log(comment);
-		onAddComment(blog.id, comment);
+		dispatch(createComment(blog.id, comment));
 		const commentForm = e.target;
 		commentForm.reset();
 	};
+
 	return (
 		<>
 			<div>

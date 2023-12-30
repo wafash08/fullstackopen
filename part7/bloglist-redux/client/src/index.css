@@ -7,3 +7,16 @@
 body {
 	padding: 1rem;
 }
+
+a {
+	text-decoration: none;
+}
+
+.navigation {
+	max-width: 300px;
+}
+
+.navigation-list li:last-child {
+	display: flex;
+	gap: 0.5rem;
+}

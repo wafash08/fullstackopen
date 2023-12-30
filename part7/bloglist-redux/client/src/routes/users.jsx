@@ -1,22 +1,28 @@
-import { useEffect, useState } from 'react';
-import { getAllUsers } from '../services/auth';
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { getUsers } from '../reducers/usersReducer';
+import { useDispatch, useSelector } from 'react-redux';
+import { createSelector } from '@reduxjs/toolkit';
+
+const selectSortedUsers = createSelector(
+	(state) => state.users,
+	(users) => {
+		const copy = [...users];
+		return copy.sort((a, b) => b.blogs.length - a.blogs.length);
+	}
+);
 
 export default function Users() {
-	const [users, setUsers] = useState([]);
+	const users = useSelector((state) => selectSortedUsers(state));
+	const dispatch = useDispatch();
+
 	useEffect(() => {
-		async function getUsers() {
-			const allUsers = await getAllUsers();
-			setUsers(allUsers);
-		}
-		getUsers();
+		dispatch(getUsers());
 	}, []);
 
 	if (!users) {
 		return <p>loading...</p>;
 	}
-
-	const sortedUsers = users.sort((a, b) => b.blogs.length - a.blogs.length);
 
 	return (
 		<div>
@@ -31,7 +37,7 @@ export default function Users() {
 					</tr>
 				</thead>
 				<tbody>
-					{sortedUsers.map(({ id, name, blogs }) => {
+					{users.map(({ id, name, blogs }) => {
 						return (
 							<tr key={id}>
 								<td style={{ paddingRight: '10px' }}>

@@ -1,12 +1,19 @@
-import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { loginUser } from '../reducers/authReducer';
 
-export default function LoginForm({ onLogin }) {
-	const [username, setUsername] = useState('');
-	const [password, setPassword] = useState('');
+export default function LoginForm() {
+	const dispatch = useDispatch();
 
-	const handleSubmit = e => {
+	const handleSubmit = (e) => {
 		e.preventDefault();
-		onLogin({ username, password });
+		const loginForm = e.target;
+		const loginFormData = new FormData(loginForm);
+		const user = {};
+		for (const [key, value] of loginFormData.entries()) {
+			user[key] = value;
+		}
+		dispatch(loginUser(user));
+		loginForm.reset();
 	};
 
 	return (
@@ -18,8 +25,6 @@ export default function LoginForm({ onLogin }) {
 						type='text'
 						name='username'
 						id='username'
-						value={username}
-						onChange={e => setUsername(e.target.value)}
 						data-test='username'
 					/>
 				</div>
@@ -29,8 +34,6 @@ export default function LoginForm({ onLogin }) {
 						type='password'
 						name='password'
 						id='password'
-						value={password}
-						onChange={e => setPassword(e.target.value)}
 						data-test='password'
 					/>
 				</div>
