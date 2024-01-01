@@ -1,7 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { addLikeToBlog, removeBlogByID } from '../reducers/blogReducer';
 import { useNavigate, useParams } from 'react-router-dom';
-import { addComment } from '../services/blogs';
 import Comments from '../components/comments';
 
 export default function Blog() {

@@ -1,8 +1,10 @@
+import { Button, Form, ListGroup } from 'react-bootstrap';
+
 function Comment({ comment }) {
 	return (
-		<li>
-			<p>{comment}</p>
-		</li>
+		<ListGroup.Item as='li'>
+			<p className='m-0'>{comment}</p>
+		</ListGroup.Item>
 	);
 }
 
@@ -21,18 +23,27 @@ export default function Comments({ onAddComment, blog }) {
 	};
 	return (
 		<>
-			<div>
-				<h3>comments</h3>
-				<form onSubmit={handleSubmit}>
-					<input type='text' name='comment' />
-					<button type='submit'>add comment</button>
-				</form>
+			<div className='mt-4'>
+				<h3>Comments</h3>
+				<Form onSubmit={handleSubmit}>
+					<Form.Group>
+						<Form.Control
+							required
+							type='text'
+							name='comment'
+							className='mb-2'
+						/>
+						<Button variant='secondary' type='submit'>
+							Send
+						</Button>
+					</Form.Group>
+				</Form>
 			</div>
-			<ul>
+			<ListGroup as='ul' className='mt-4 grid gap-2'>
 				{blog.comments.map(({ comment, id }) => {
 					return <Comment key={id} comment={comment} />;
 				})}
-			</ul>
+			</ListGroup>
 		</>
 	);
 }

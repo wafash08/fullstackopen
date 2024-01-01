@@ -9,6 +9,7 @@ import Users from './routes/users';
 import User from './routes/user';
 import Bloglist from './components/bloglist';
 import Blog from './routes/blog';
+import SignUp from './routes/signup';
 
 const queryClient = new QueryClient();
 
@@ -16,6 +17,7 @@ const router = createBrowserRouter([
 	{
 		path: '/',
 		element: <App />,
+		errorElement: <p>Ooops, the page you are accessing does not exist!</p>,
 		children: [
 			{
 				index: true,
@@ -34,6 +36,11 @@ const router = createBrowserRouter([
 				element: <Blog />,
 			},
 		],
+	},
+	{
+		path: '/signup',
+		element: <SignUp />,
+		errorElement: <p>Ooops, the page you are accessing does not exist!</p>,
 	},
 ]);
 

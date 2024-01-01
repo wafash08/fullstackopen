@@ -4,6 +4,7 @@ import { useQuery } from 'react-query';
 import { LS_BLOGLIST_USER } from '../App';
 import { getAll } from '../services/blogs';
 import { Link } from 'react-router-dom';
+import { Button, ListGroup } from 'react-bootstrap';
 
 export default function Bloglist() {
 	const {
@@ -56,21 +57,23 @@ export default function Bloglist() {
 
 	return (
 		<>
-			<button
+			<Button
+				variant='secondary'
 				type='button'
 				onClick={sortByLikes}
 				data-test='sortbylikes_button'
+				className='mb-4'
 			>
-				sort by likes "{sortBy}" (
+				Sort by likes "{sortBy}" (
 				{sortBy === 'asc' ? 'least to most' : 'most to least'})
-			</button>
-			<ul className='bloglist' style={{ listStyle: 'none' }}>
+			</Button>
+			<ListGroup className='bloglist' style={{ listStyle: 'none' }}>
 				{sortedBlogs.map((blog) => (
-					<li key={blog.id} style={styles}>
+					<ListGroup.Item key={blog.id} style={styles}>
 						<Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
-					</li>
+					</ListGroup.Item>
 				))}
-			</ul>
+			</ListGroup>
 		</>
 	);
 }

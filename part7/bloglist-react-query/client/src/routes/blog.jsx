@@ -4,6 +4,7 @@ import { addComment, addLikeTo, getBlogByID, remove } from '../services/blogs';
 import { useNotify } from '../contexts/notification-context';
 import { useUser } from '../contexts/user-context';
 import Comments from '../components/comments';
+import { Button } from 'react-bootstrap';
 
 export default function Blog() {
 	const user = useUser();
@@ -78,27 +79,30 @@ export default function Blog() {
 				<a href={blog.url} rel='noreferrer' target='_blank'>
 					{blog.url}
 				</a>
-				<p>
+				<p className='mt-2'>
 					<span>
 						{blog.likes} {blog.likes > 1 ? 'likes' : 'like'}
 					</span>{' '}
-					<button
+					<Button
+						variant='secondary'
 						type='button'
 						onClick={() => handleLike(blog)}
 						data-test='like_button'
 					>
 						like
-					</button>
+					</Button>
 				</p>
-				<p>added by {blog.user.name}</p>
+				<p>Added by {blog.user.name === user.name ? 'you' : blog.user.name}</p>
 				{showDeleteButton ? (
-					<button
+					<Button
+						variant='danger'
 						type='button'
 						onClick={() => handleRemoveBlogBy(blog.id)}
 						data-test='remove_button'
+						className='mt-2'
 					>
 						remove
-					</button>
+					</Button>
 				) : null}
 				<Comments blog={blog} onAddComment={handleAddComment} />
 			</div>

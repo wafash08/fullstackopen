@@ -1,6 +1,7 @@
 import { useQuery } from 'react-query';
 import { fetchAllUsers } from '../services/users';
 import { Link } from 'react-router-dom';
+import { Table } from 'react-bootstrap';
 
 export default function Users() {
 	const { data: users, isLoading } = useQuery('users', fetchAllUsers);
@@ -14,12 +15,14 @@ export default function Users() {
 	return (
 		<div>
 			<h2>Users</h2>
-			<table>
+			<Table bordered hover>
 				<thead>
 					<tr>
-						<th></th>
 						<th>
-							<h3>blogs created</h3>
+							<p>Name</p>
+						</th>
+						<th>
+							<p>Blogs Created</p>
 						</th>
 					</tr>
 				</thead>
@@ -27,7 +30,7 @@ export default function Users() {
 					{sortedUsers.map(({ id, name, blogs }) => {
 						return (
 							<tr key={id}>
-								<td style={{ paddingRight: '10px' }}>
+								<td>
 									<Link to={`/users/${id}`}>{name}</Link>
 								</td>
 								<td>{blogs.length}</td>
@@ -35,7 +38,7 @@ export default function Users() {
 						);
 					})}
 				</tbody>
-			</table>
+			</Table>
 		</div>
 	);
 }

@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from 'react-query';
 import { create as createBlog } from '../services/blogs';
 import { useNotify } from '../contexts/notification-context';
 import { useUser } from '../contexts/user-context';
+import { Button, Form } from 'react-bootstrap';
 
 export default function CreateNewBlogForm() {
 	const user = useUser();
@@ -41,22 +42,45 @@ export default function CreateNewBlogForm() {
 	};
 
 	return (
-		<form onSubmit={handleCreateBlog} name='newBlogForm'>
-			<div>
-				<label htmlFor='title'>title</label>
-				<input type='text' id='title' name='title' data-test='title' />
-			</div>
-			<div>
-				<label htmlFor='author'>author</label>
-				<input type='text' id='author' name='author' data-test='author' />
-			</div>
-			<div>
-				<label htmlFor='url'>url</label>
-				<input type='url' id='url' name='url' data-test='url' />
-			</div>
-			<button type='submit' data-test='create'>
+		<Form onSubmit={handleCreateBlog} name='newBlogForm'>
+			<Form.Group className='mb-2' controlId='title'>
+				<Form.Label>Title</Form.Label>
+				<Form.Control
+					type='text'
+					placeholder='An Interactive Guide to CSS Grid'
+					name='title'
+					data-test='title'
+					required
+				/>
+			</Form.Group>
+			<Form.Group className='mb-2' controlId='author'>
+				<Form.Label>Author</Form.Label>
+				<Form.Control
+					type='text'
+					placeholder='Josh Comeau'
+					name='author'
+					data-test='author'
+					required
+				/>
+			</Form.Group>
+			<Form.Group className='mb-2' controlId='url'>
+				<Form.Label>Url</Form.Label>
+				<Form.Control
+					type='text'
+					placeholder='https://www.joshwcomeau.com/css/interactive-guide-to-grid/'
+					name='url'
+					data-test='url'
+					required
+				/>
+			</Form.Group>
+			<Button
+				className='mb-2'
+				variant='success'
+				type='submit'
+				data-test='create'
+			>
 				create
-			</button>
-		</form>
+			</Button>
+		</Form>
 	);
 }
